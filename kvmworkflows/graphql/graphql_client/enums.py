@@ -18,7 +18,7 @@ class entries_select_column(str, Enum):
     description = "description"
     id = "id"
     lat = "lat"
-    long = "long"
+    lng = "lng"
     status = "status"
     title = "title"
     updated_at = "updated_at"
@@ -29,10 +29,26 @@ class entries_update_column(str, Enum):
     description = "description"
     id = "id"
     lat = "lat"
-    long = "long"
+    lng = "lng"
     status = "status"
     title = "title"
     updated_at = "updated_at"
+
+
+class entry_categories_constraint(str, Enum):
+    entry_categories_pkey = "entry_categories_pkey"
+
+
+class entry_categories_select_column(str, Enum):
+    category = "category"
+    created_at = "created_at"
+    entry = "entry"
+
+
+class entry_categories_update_column(str, Enum):
+    category = "category"
+    created_at = "created_at"
+    entry = "entry"
 
 
 class entry_links_constraint(str, Enum):

@@ -5,8 +5,15 @@ from typing import Any, Dict, List, Optional, Union
 
 from .async_base_client import AsyncBaseClient
 from .base_model import UNSET, UnsetType
-from .input_types import entries_insert_input, tags_insert_input
-from .insert_entries import InsertEntries
+from .delete_entry_tags import DeleteEntryTags
+from .get_entry_tags import GetEntryTags
+from .input_types import (
+    entries_insert_input,
+    entry_tags_insert_input,
+    tags_insert_input,
+)
+from .insert_entry_tags import InsertEntryTags
+from .insert_search_entries import InsertSearchEntries
 from .insert_tags import InsertTags
 
 
@@ -15,17 +22,17 @@ def gql(q: str) -> str:
 
 
 class Client(AsyncBaseClient):
-    async def insert_entries(
+    async def insert_search_entries(
         self,
         objects: Union[Optional[List[entries_insert_input]], UnsetType] = UNSET,
         **kwargs: Any
-    ) -> InsertEntries:
+    ) -> InsertSearchEntries:
         query = gql(
             """
-            mutation InsertEntries($objects: [entries_insert_input!] = {}) {
+            mutation InsertSearchEntries($objects: [entries_insert_input!] = {}) {
               insert_entries(
                 objects: $objects
-                on_conflict: {constraint: entries_pkey, update_columns: [id, status, lat, long, title, description]}
+                on_conflict: {constraint: entries_pkey, update_columns: [id, status, lat, lng, title, description]}
               ) {
                 affected_rows
               }
@@ -34,10 +41,13 @@ class Client(AsyncBaseClient):
         )
         variables: Dict[str, object] = {"objects": objects}
         response = await self.execute(
-            query=query, operation_name="InsertEntries", variables=variables, **kwargs
+            query=query,
+            operation_name="InsertSearchEntries",
+            variables=variables,
+            **kwargs
         )
         data = self.get_data(response)
-        return InsertEntries.model_validate(data)
+        return InsertSearchEntries.model_validate(data)
 
     async def insert_tags(
         self,
@@ -62,3 +72,64 @@ class Client(AsyncBaseClient):
         )
         data = self.get_data(response)
         return InsertTags.model_validate(data)
+
+    async def get_entry_tags(self, eq: str, **kwargs: Any) -> GetEntryTags:
+        query = gql(
+            """
+            query GetEntryTags($_eq: String!) {
+              entry_tags(where: {entry: {_eq: $_eq}}) {
+                tag
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {"_eq": eq}
+        response = await self.execute(
+            query=query, operation_name="GetEntryTags", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return GetEntryTags.model_validate(data)
+
+    async def insert_entry_tags(
+        self,
+        objects: Union[Optional[List[entry_tags_insert_input]], UnsetType] = UNSET,
+        **kwargs: Any
+    ) -> InsertEntryTags:
+        query = gql(
+            """
+            mutation InsertEntryTags($objects: [entry_tags_insert_input!] = {}) {
+              insert_entry_tags(
+                objects: $objects
+                on_conflict: {constraint: entry_tags_pkey, update_columns: []}
+              ) {
+                affected_rows
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {"objects": objects}
+        response = await self.execute(
+            query=query, operation_name="InsertEntryTags", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return InsertEntryTags.model_validate(data)
+
+    async def delete_entry_tags(
+        self, entry: str, tag: str, **kwargs: Any
+    ) -> DeleteEntryTags:
+        query = gql(
+            """
+            mutation DeleteEntryTags($entry: String!, $tag: String!) {
+              delete_entry_tags_by_pk(entry: $entry, tag: $tag) {
+                entry
+                tag
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {"entry": entry, "tag": tag}
+        response = await self.execute(
+            query=query, operation_name="DeleteEntryTags", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return DeleteEntryTags.model_validate(data)

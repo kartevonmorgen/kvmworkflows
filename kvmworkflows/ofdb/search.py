@@ -4,6 +4,7 @@ from pydantic import StrictStr, BaseModel
 from typing import List
 from rich import print
 from kvmworkflows.models.search_entry import SearchEntry
+from kvmworkflows.config.config import config
 
 
 class SearchResult(BaseModel):
@@ -24,7 +25,7 @@ async def search(
     transport = httpx.AsyncHTTPTransport(retries=10)
     async with httpx.AsyncClient(transport=transport) as client:
         response = await client.get(
-            "https://api.ofdb.io/v0/search",
+            f"{config.sources.ofdb.url}/search",
             params={
                 "bbox": bbox,
                 # "org_tag": org_tag,
@@ -33,7 +34,7 @@ async def search(
                 # "ids": ids,
                 # "tags": tags,
                 # "status": status,
-                # "limit": limit,
+                "limit": 2000,
             },
         )
 
@@ -41,11 +42,11 @@ async def search(
 
 
 async def test_search():
-    bbox = "44.855868807357275,-7.294921875000001,56.108810038002154,18.479003906250004"
+    bbox = "43.9137,-5.8227,55.3666,20.1489"
     result = await search(
         bbox=bbox,
     )   
-    print(result)
+    print(len(result.visible))
 
 
 if __name__ == "__main__":

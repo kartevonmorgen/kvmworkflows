@@ -1,9 +1,9 @@
-mutation InsertEntries($objects: [entries_insert_input!] = {}) {
+mutation InsertSearchEntries($objects: [entries_insert_input!] = {}) {
   insert_entries(
     objects: $objects
     on_conflict: {
       constraint: entries_pkey
-      update_columns: [id, status, lat, long, title, description]
+      update_columns: [id, status, lat, lng, title, description]
     }
   ) {
     affected_rows
@@ -18,3 +18,23 @@ mutation InsertTags($tags: [tags_insert_input!] = {}) {
     affected_rows
   }
 }
+
+query GetEntryTags($_eq: String!) {
+  entry_tags(where: {entry: {_eq: $_eq}}) {
+    tag
+  }
+}
+
+mutation InsertEntryTags($objects: [entry_tags_insert_input!] = {}) {
+  insert_entry_tags(objects: $objects, on_conflict: { constraint: entry_tags_pkey, update_columns: [] }) {
+    affected_rows
+  }
+}
+
+mutation DeleteEntryTags($entry: String!, $tag: String!) {
+  delete_entry_tags_by_pk(entry: $entry, tag: $tag) {
+    entry
+    tag
+  }
+}
+

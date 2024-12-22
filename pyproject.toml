@@ -14,6 +14,8 @@ httpx = "^0.28.1"
 temporalio = "^1.8.0"
 rich = "^13.9.4"
 loguru = "^0.7.3"
+numpy = "^2.2.1"
+tqdm = "^4.67.1"
 
 
 [build-system]

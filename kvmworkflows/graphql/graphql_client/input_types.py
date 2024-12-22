@@ -10,6 +10,9 @@ from .enums import (
     cursor_ordering,
     entries_constraint,
     entries_update_column,
+    entry_categories_constraint,
+    entry_categories_select_column,
+    entry_categories_update_column,
     entry_links_constraint,
     entry_links_select_column,
     entry_links_update_column,
@@ -64,11 +67,13 @@ class entries_bool_exp(BaseModel):
     or_: Optional[List["entries_bool_exp"]] = Field(alias="_or", default=None)
     created_at: Optional["timestamptz_comparison_exp"] = None
     description: Optional["String_comparison_exp"] = None
+    entry_categories: Optional["entry_categories_bool_exp"] = None
+    entry_categories_aggregate: Optional["entry_categories_aggregate_bool_exp"] = None
     id: Optional["String_comparison_exp"] = None
     lat: Optional["numeric_comparison_exp"] = None
     links: Optional["entry_links_bool_exp"] = None
     links_aggregate: Optional["entry_links_aggregate_bool_exp"] = None
-    long: Optional["numeric_comparison_exp"] = None
+    lng: Optional["numeric_comparison_exp"] = None
     status: Optional["String_comparison_exp"] = None
     tags: Optional["entry_tags_bool_exp"] = None
     tags_aggregate: Optional["entry_tags_aggregate_bool_exp"] = None
@@ -78,20 +83,26 @@ class entries_bool_exp(BaseModel):
 
 class entries_inc_input(BaseModel):
     lat: Optional[Any] = None
-    long: Optional[Any] = None
+    lng: Optional[Any] = None
 
 
 class entries_insert_input(BaseModel):
     created_at: Optional[Any] = None
     description: Optional[str] = None
+    entry_categories: Optional["entry_categories_arr_rel_insert_input"] = None
     id: Optional[str] = None
     lat: Optional[Any] = None
     links: Optional["entry_links_arr_rel_insert_input"] = None
-    long: Optional[Any] = None
+    lng: Optional[Any] = None
     status: Optional[str] = None
     tags: Optional["entry_tags_arr_rel_insert_input"] = None
     title: Optional[str] = None
     updated_at: Optional[Any] = None
+
+
+class entries_obj_rel_insert_input(BaseModel):
+    data: "entries_insert_input"
+    on_conflict: Optional["entries_on_conflict"] = None
 
 
 class entries_on_conflict(BaseModel):
@@ -103,10 +114,11 @@ class entries_on_conflict(BaseModel):
 class entries_order_by(BaseModel):
     created_at: Optional[order_by] = None
     description: Optional[order_by] = None
+    entry_categories_aggregate: Optional["entry_categories_aggregate_order_by"] = None
     id: Optional[order_by] = None
     lat: Optional[order_by] = None
     links_aggregate: Optional["entry_links_aggregate_order_by"] = None
-    long: Optional[order_by] = None
+    lng: Optional[order_by] = None
     status: Optional[order_by] = None
     tags_aggregate: Optional["entry_tags_aggregate_order_by"] = None
     title: Optional[order_by] = None
@@ -122,7 +134,7 @@ class entries_set_input(BaseModel):
     description: Optional[str] = None
     id: Optional[str] = None
     lat: Optional[Any] = None
-    long: Optional[Any] = None
+    lng: Optional[Any] = None
     status: Optional[str] = None
     title: Optional[str] = None
     updated_at: Optional[Any] = None
@@ -138,7 +150,7 @@ class entries_stream_cursor_value_input(BaseModel):
     description: Optional[str] = None
     id: Optional[str] = None
     lat: Optional[Any] = None
-    long: Optional[Any] = None
+    lng: Optional[Any] = None
     status: Optional[str] = None
     title: Optional[str] = None
     updated_at: Optional[Any] = None
@@ -148,6 +160,105 @@ class entries_updates(BaseModel):
     inc: Optional["entries_inc_input"] = Field(alias="_inc", default=None)
     set: Optional["entries_set_input"] = Field(alias="_set", default=None)
     where: "entries_bool_exp"
+
+
+class entry_categories_aggregate_bool_exp(BaseModel):
+    count: Optional["entry_categories_aggregate_bool_exp_count"] = None
+
+
+class entry_categories_aggregate_bool_exp_count(BaseModel):
+    arguments: Optional[List[entry_categories_select_column]] = None
+    distinct: Optional[bool] = None
+    filter: Optional["entry_categories_bool_exp"] = None
+    predicate: "Int_comparison_exp"
+
+
+class entry_categories_aggregate_order_by(BaseModel):
+    count: Optional[order_by] = None
+    max: Optional["entry_categories_max_order_by"] = None
+    min: Optional["entry_categories_min_order_by"] = None
+
+
+class entry_categories_arr_rel_insert_input(BaseModel):
+    data: List["entry_categories_insert_input"]
+    on_conflict: Optional["entry_categories_on_conflict"] = None
+
+
+class entry_categories_bool_exp(BaseModel):
+    and_: Optional[List["entry_categories_bool_exp"]] = Field(
+        alias="_and", default=None
+    )
+    not_: Optional["entry_categories_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[List["entry_categories_bool_exp"]] = Field(alias="_or", default=None)
+    category: Optional["String_comparison_exp"] = None
+    created_at: Optional["timestamptz_comparison_exp"] = None
+    entry: Optional["String_comparison_exp"] = None
+    entry_by_entry: Optional["entries_bool_exp"] = Field(
+        alias="entryByEntry", default=None
+    )
+
+
+class entry_categories_insert_input(BaseModel):
+    category: Optional[str] = None
+    created_at: Optional[Any] = None
+    entry: Optional[str] = None
+    entry_by_entry: Optional["entries_obj_rel_insert_input"] = Field(
+        alias="entryByEntry", default=None
+    )
+
+
+class entry_categories_max_order_by(BaseModel):
+    category: Optional[order_by] = None
+    created_at: Optional[order_by] = None
+    entry: Optional[order_by] = None
+
+
+class entry_categories_min_order_by(BaseModel):
+    category: Optional[order_by] = None
+    created_at: Optional[order_by] = None
+    entry: Optional[order_by] = None
+
+
+class entry_categories_on_conflict(BaseModel):
+    constraint: entry_categories_constraint
+    update_columns: List[entry_categories_update_column]
+    where: Optional["entry_categories_bool_exp"] = None
+
+
+class entry_categories_order_by(BaseModel):
+    category: Optional[order_by] = None
+    created_at: Optional[order_by] = None
+    entry: Optional[order_by] = None
+    entry_by_entry: Optional["entries_order_by"] = Field(
+        alias="entryByEntry", default=None
+    )
+
+
+class entry_categories_pk_columns_input(BaseModel):
+    category: str
+    entry: str
+
+
+class entry_categories_set_input(BaseModel):
+    category: Optional[str] = None
+    created_at: Optional[Any] = None
+    entry: Optional[str] = None
+
+
+class entry_categories_stream_cursor_input(BaseModel):
+    initial_value: "entry_categories_stream_cursor_value_input"
+    ordering: Optional[cursor_ordering] = None
+
+
+class entry_categories_stream_cursor_value_input(BaseModel):
+    category: Optional[str] = None
+    created_at: Optional[Any] = None
+    entry: Optional[str] = None
+
+
+class entry_categories_updates(BaseModel):
+    set: Optional["entry_categories_set_input"] = Field(alias="_set", default=None)
+    where: "entry_categories_bool_exp"
 
 
 class entry_links_aggregate_bool_exp(BaseModel):
@@ -190,7 +301,11 @@ class entry_links_bool_exp(BaseModel):
     or_: Optional[List["entry_links_bool_exp"]] = Field(alias="_or", default=None)
     created_at: Optional["timestamptz_comparison_exp"] = None
     entry: Optional["String_comparison_exp"] = None
+    entry_by_entry: Optional["entries_bool_exp"] = Field(
+        alias="entryByEntry", default=None
+    )
     link: Optional["Int_comparison_exp"] = None
+    link_by_link: Optional["link_bool_exp"] = Field(alias="linkByLink", default=None)
 
 
 class entry_links_inc_input(BaseModel):
@@ -200,7 +315,13 @@ class entry_links_inc_input(BaseModel):
 class entry_links_insert_input(BaseModel):
     created_at: Optional[Any] = None
     entry: Optional[str] = None
+    entry_by_entry: Optional["entries_obj_rel_insert_input"] = Field(
+        alias="entryByEntry", default=None
+    )
     link: Optional[int] = None
+    link_by_link: Optional["link_obj_rel_insert_input"] = Field(
+        alias="linkByLink", default=None
+    )
 
 
 class entry_links_max_order_by(BaseModel):
@@ -224,7 +345,11 @@ class entry_links_on_conflict(BaseModel):
 class entry_links_order_by(BaseModel):
     created_at: Optional[order_by] = None
     entry: Optional[order_by] = None
+    entry_by_entry: Optional["entries_order_by"] = Field(
+        alias="entryByEntry", default=None
+    )
     link: Optional[order_by] = None
+    link_by_link: Optional["link_order_by"] = Field(alias="linkByLink", default=None)
 
 
 class entry_links_pk_columns_input(BaseModel):
@@ -311,13 +436,23 @@ class entry_tags_bool_exp(BaseModel):
     or_: Optional[List["entry_tags_bool_exp"]] = Field(alias="_or", default=None)
     created_at: Optional["timestamptz_comparison_exp"] = None
     entry: Optional["String_comparison_exp"] = None
+    entry_by_entry: Optional["entries_bool_exp"] = Field(
+        alias="entryByEntry", default=None
+    )
     tag: Optional["String_comparison_exp"] = None
+    tag_by_tag: Optional["tags_bool_exp"] = Field(alias="tagByTag", default=None)
 
 
 class entry_tags_insert_input(BaseModel):
     created_at: Optional[Any] = None
     entry: Optional[str] = None
+    entry_by_entry: Optional["entries_obj_rel_insert_input"] = Field(
+        alias="entryByEntry", default=None
+    )
     tag: Optional[str] = None
+    tag_by_tag: Optional["tags_obj_rel_insert_input"] = Field(
+        alias="tagByTag", default=None
+    )
 
 
 class entry_tags_max_order_by(BaseModel):
@@ -341,7 +476,11 @@ class entry_tags_on_conflict(BaseModel):
 class entry_tags_order_by(BaseModel):
     created_at: Optional[order_by] = None
     entry: Optional[order_by] = None
+    entry_by_entry: Optional["entries_order_by"] = Field(
+        alias="entryByEntry", default=None
+    )
     tag: Optional[order_by] = None
+    tag_by_tag: Optional["tags_order_by"] = Field(alias="tagByTag", default=None)
 
 
 class entry_tags_pk_columns_input(BaseModel):
@@ -377,6 +516,8 @@ class link_bool_exp(BaseModel):
     or_: Optional[List["link_bool_exp"]] = Field(alias="_or", default=None)
     created_at: Optional["timestamptz_comparison_exp"] = None
     description: Optional["String_comparison_exp"] = None
+    entry_links: Optional["entry_links_bool_exp"] = None
+    entry_links_aggregate: Optional["entry_links_aggregate_bool_exp"] = None
     id: Optional["Int_comparison_exp"] = None
     title: Optional["String_comparison_exp"] = None
     updated_at: Optional["timestamptz_comparison_exp"] = None
@@ -390,10 +531,16 @@ class link_inc_input(BaseModel):
 class link_insert_input(BaseModel):
     created_at: Optional[Any] = None
     description: Optional[str] = None
+    entry_links: Optional["entry_links_arr_rel_insert_input"] = None
     id: Optional[int] = None
     title: Optional[str] = None
     updated_at: Optional[Any] = None
     url: Optional[str] = None
+
+
+class link_obj_rel_insert_input(BaseModel):
+    data: "link_insert_input"
+    on_conflict: Optional["link_on_conflict"] = None
 
 
 class link_on_conflict(BaseModel):
@@ -405,6 +552,7 @@ class link_on_conflict(BaseModel):
 class link_order_by(BaseModel):
     created_at: Optional[order_by] = None
     description: Optional[order_by] = None
+    entry_links_aggregate: Optional["entry_links_aggregate_order_by"] = None
     id: Optional[order_by] = None
     title: Optional[order_by] = None
     updated_at: Optional[order_by] = None
@@ -461,12 +609,20 @@ class tags_bool_exp(BaseModel):
     not_: Optional["tags_bool_exp"] = Field(alias="_not", default=None)
     or_: Optional[List["tags_bool_exp"]] = Field(alias="_or", default=None)
     created_at: Optional["timestamptz_comparison_exp"] = None
+    entry_tags: Optional["entry_tags_bool_exp"] = None
+    entry_tags_aggregate: Optional["entry_tags_aggregate_bool_exp"] = None
     id: Optional["String_comparison_exp"] = None
 
 
 class tags_insert_input(BaseModel):
     created_at: Optional[Any] = None
+    entry_tags: Optional["entry_tags_arr_rel_insert_input"] = None
     id: Optional[str] = None
+
+
+class tags_obj_rel_insert_input(BaseModel):
+    data: "tags_insert_input"
+    on_conflict: Optional["tags_on_conflict"] = None
 
 
 class tags_on_conflict(BaseModel):
@@ -477,6 +633,7 @@ class tags_on_conflict(BaseModel):
 
 class tags_order_by(BaseModel):
     created_at: Optional[order_by] = None
+    entry_tags_aggregate: Optional["entry_tags_aggregate_order_by"] = None
     id: Optional[order_by] = None
 
 
@@ -518,16 +675,29 @@ class timestamptz_comparison_exp(BaseModel):
 
 entries_bool_exp.model_rebuild()
 entries_insert_input.model_rebuild()
+entries_obj_rel_insert_input.model_rebuild()
 entries_on_conflict.model_rebuild()
 entries_order_by.model_rebuild()
 entries_stream_cursor_input.model_rebuild()
 entries_updates.model_rebuild()
+entry_categories_aggregate_bool_exp.model_rebuild()
+entry_categories_aggregate_bool_exp_count.model_rebuild()
+entry_categories_aggregate_order_by.model_rebuild()
+entry_categories_arr_rel_insert_input.model_rebuild()
+entry_categories_bool_exp.model_rebuild()
+entry_categories_insert_input.model_rebuild()
+entry_categories_on_conflict.model_rebuild()
+entry_categories_order_by.model_rebuild()
+entry_categories_stream_cursor_input.model_rebuild()
+entry_categories_updates.model_rebuild()
 entry_links_aggregate_bool_exp.model_rebuild()
 entry_links_aggregate_bool_exp_count.model_rebuild()
 entry_links_aggregate_order_by.model_rebuild()
 entry_links_arr_rel_insert_input.model_rebuild()
 entry_links_bool_exp.model_rebuild()
+entry_links_insert_input.model_rebuild()
 entry_links_on_conflict.model_rebuild()
+entry_links_order_by.model_rebuild()
 entry_links_stream_cursor_input.model_rebuild()
 entry_links_updates.model_rebuild()
 entry_tags_aggregate_bool_exp.model_rebuild()
@@ -535,14 +705,22 @@ entry_tags_aggregate_bool_exp_count.model_rebuild()
 entry_tags_aggregate_order_by.model_rebuild()
 entry_tags_arr_rel_insert_input.model_rebuild()
 entry_tags_bool_exp.model_rebuild()
+entry_tags_insert_input.model_rebuild()
 entry_tags_on_conflict.model_rebuild()
+entry_tags_order_by.model_rebuild()
 entry_tags_stream_cursor_input.model_rebuild()
 entry_tags_updates.model_rebuild()
 link_bool_exp.model_rebuild()
+link_insert_input.model_rebuild()
+link_obj_rel_insert_input.model_rebuild()
 link_on_conflict.model_rebuild()
+link_order_by.model_rebuild()
 link_stream_cursor_input.model_rebuild()
 link_updates.model_rebuild()
 tags_bool_exp.model_rebuild()
+tags_insert_input.model_rebuild()
+tags_obj_rel_insert_input.model_rebuild()
 tags_on_conflict.model_rebuild()
+tags_order_by.model_rebuild()
 tags_stream_cursor_input.model_rebuild()
 tags_updates.model_rebuild()
