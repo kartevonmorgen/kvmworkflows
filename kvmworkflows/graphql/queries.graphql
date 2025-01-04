@@ -1,4 +1,32 @@
-mutation InsertSearchEntries($objects: [entries_insert_input!] = {}) {
+query GetEntriesByFilters(
+  $create_at_gte: timestamptz!
+  $create_at_lte: timestamptz!
+  $lat_gte: numeric!
+  $lat_lte: numeric!
+  $lon_gte: numeric!
+  $lon_lte: numeric!
+) {
+  entries(
+    where: {
+      _and: {
+        created_at: { _gte: $create_at_gte, _lte: $create_at_lte }
+        lat: { _gte: $lat_gte, _lte: $lat_lte }
+        lng: { _gte: $lon_gte, _lte: $lon_lte }
+      }
+    }
+  ) {
+    created_at
+    description
+    lat
+    id
+    lng
+    status
+    title
+    updated_at
+  }
+}
+
+mutation InsertEntries($objects: [entries_insert_input!] = {}) {
   insert_entries(
     objects: $objects
     on_conflict: {
@@ -20,13 +48,16 @@ mutation InsertTags($tags: [tags_insert_input!] = {}) {
 }
 
 query GetEntryTags($_eq: String!) {
-  entry_tags(where: {entry: {_eq: $_eq}}) {
+  entry_tags(where: { entry: { _eq: $_eq } }) {
     tag
   }
 }
 
 mutation InsertEntryTags($objects: [entry_tags_insert_input!] = {}) {
-  insert_entry_tags(objects: $objects, on_conflict: { constraint: entry_tags_pkey, update_columns: [] }) {
+  insert_entry_tags(
+    objects: $objects
+    on_conflict: { constraint: entry_tags_pkey, update_columns: [] }
+  ) {
     affected_rows
   }
 }
@@ -38,3 +69,78 @@ mutation DeleteEntryTags($entry: String!, $tag: String!) {
   }
 }
 
+query GetExactSubscriptions(
+  $email: String!
+  $interval: String!
+  $lat_min: numeric!
+  $lon_min: numeric!
+  $lat_max: numeric!
+  $lon_max: numeric!
+) {
+  subscriptions(
+    where: {
+      _and: {
+        email: { _eq: $email }
+        interval: { _eq: $interval }
+        lat_min: { _eq: $lat_min }
+        lon_min: { _eq: $lon_min }
+        lat_max: { _eq: $lat_max }
+        lon_max: { _eq: $lon_max }
+      }
+    }
+  ) {
+    id
+  }
+}
+
+query GetSubscriptionsByInterval($interval: String!) {
+  subscriptions(where: { interval: { _eq: $interval } }) {
+    email
+    id
+    lat_min
+    lon_min
+    lat_max
+    lon_max
+    interval
+  }
+}
+
+mutation InsertSubscriptionsOne(
+  $interval: String!
+  $email: String!
+  $lat_min: numeric!
+  $lon_min: numeric!
+  $lat_max: numeric!
+  $lon_max: numeric!
+) {
+  insert_subscriptions_one(
+    object: {
+      interval: $interval
+      email: $email
+      lat_min: $lat_min
+      lon_min: $lon_min
+      lat_max: $lat_max
+      lon_max: $lon_max
+    }
+  ) {
+    id
+    email
+    interval
+    lat_min
+    lon_min
+    lat_max
+    lon_max
+  }
+}
+
+mutation DeleteSubscriptionsByPk($id: uuid!) {
+  delete_subscriptions_by_pk(id: $id) {
+    id
+    email
+    interval
+    lat_min
+    lon_min
+    lat_max
+    lon_max
+  }
+}

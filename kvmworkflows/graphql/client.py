@@ -5,4 +5,4 @@ from kvmworkflows.config.config import config
 
 
 http_client = httpx.AsyncClient(headers=config.sinks.graphql.headers, timeout=config.sinks.graphql.timeout)
-client = Client(config.sinks.graphql.url, http_client=http_client)
+graphql_client = Client(config.sinks.graphql.url, http_client=http_client)

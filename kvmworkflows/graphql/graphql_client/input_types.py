@@ -22,6 +22,8 @@ from .enums import (
     link_constraint,
     link_update_column,
     order_by,
+    subscriptions_constraint,
+    subscriptions_update_column,
     tags_constraint,
     tags_update_column,
 )
@@ -604,6 +606,103 @@ class numeric_comparison_exp(BaseModel):
     nin: Optional[List[Any]] = Field(alias="_nin", default=None)
 
 
+class subscriptions_bool_exp(BaseModel):
+    and_: Optional[List["subscriptions_bool_exp"]] = Field(alias="_and", default=None)
+    not_: Optional["subscriptions_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[List["subscriptions_bool_exp"]] = Field(alias="_or", default=None)
+    created_at: Optional["timestamptz_comparison_exp"] = None
+    email: Optional["String_comparison_exp"] = None
+    id: Optional["uuid_comparison_exp"] = None
+    interval: Optional["String_comparison_exp"] = None
+    lat_max: Optional["numeric_comparison_exp"] = None
+    lat_min: Optional["numeric_comparison_exp"] = None
+    lon_max: Optional["numeric_comparison_exp"] = None
+    lon_min: Optional["numeric_comparison_exp"] = None
+    n_emails_sent: Optional["Int_comparison_exp"] = None
+    updated_at: Optional["timestamptz_comparison_exp"] = None
+
+
+class subscriptions_inc_input(BaseModel):
+    lat_max: Optional[Any] = None
+    lat_min: Optional[Any] = None
+    lon_max: Optional[Any] = None
+    lon_min: Optional[Any] = None
+    n_emails_sent: Optional[int] = None
+
+
+class subscriptions_insert_input(BaseModel):
+    created_at: Optional[Any] = None
+    email: Optional[str] = None
+    id: Optional[Any] = None
+    interval: Optional[str] = None
+    lat_max: Optional[Any] = None
+    lat_min: Optional[Any] = None
+    lon_max: Optional[Any] = None
+    lon_min: Optional[Any] = None
+    n_emails_sent: Optional[int] = None
+    updated_at: Optional[Any] = None
+
+
+class subscriptions_on_conflict(BaseModel):
+    constraint: subscriptions_constraint
+    update_columns: List[subscriptions_update_column]
+    where: Optional["subscriptions_bool_exp"] = None
+
+
+class subscriptions_order_by(BaseModel):
+    created_at: Optional[order_by] = None
+    email: Optional[order_by] = None
+    id: Optional[order_by] = None
+    interval: Optional[order_by] = None
+    lat_max: Optional[order_by] = None
+    lat_min: Optional[order_by] = None
+    lon_max: Optional[order_by] = None
+    lon_min: Optional[order_by] = None
+    n_emails_sent: Optional[order_by] = None
+    updated_at: Optional[order_by] = None
+
+
+class subscriptions_pk_columns_input(BaseModel):
+    id: Any
+
+
+class subscriptions_set_input(BaseModel):
+    created_at: Optional[Any] = None
+    email: Optional[str] = None
+    id: Optional[Any] = None
+    interval: Optional[str] = None
+    lat_max: Optional[Any] = None
+    lat_min: Optional[Any] = None
+    lon_max: Optional[Any] = None
+    lon_min: Optional[Any] = None
+    n_emails_sent: Optional[int] = None
+    updated_at: Optional[Any] = None
+
+
+class subscriptions_stream_cursor_input(BaseModel):
+    initial_value: "subscriptions_stream_cursor_value_input"
+    ordering: Optional[cursor_ordering] = None
+
+
+class subscriptions_stream_cursor_value_input(BaseModel):
+    created_at: Optional[Any] = None
+    email: Optional[str] = None
+    id: Optional[Any] = None
+    interval: Optional[str] = None
+    lat_max: Optional[Any] = None
+    lat_min: Optional[Any] = None
+    lon_max: Optional[Any] = None
+    lon_min: Optional[Any] = None
+    n_emails_sent: Optional[int] = None
+    updated_at: Optional[Any] = None
+
+
+class subscriptions_updates(BaseModel):
+    inc: Optional["subscriptions_inc_input"] = Field(alias="_inc", default=None)
+    set: Optional["subscriptions_set_input"] = Field(alias="_set", default=None)
+    where: "subscriptions_bool_exp"
+
+
 class tags_bool_exp(BaseModel):
     and_: Optional[List["tags_bool_exp"]] = Field(alias="_and", default=None)
     not_: Optional["tags_bool_exp"] = Field(alias="_not", default=None)
@@ -673,6 +772,18 @@ class timestamptz_comparison_exp(BaseModel):
     nin: Optional[List[Any]] = Field(alias="_nin", default=None)
 
 
+class uuid_comparison_exp(BaseModel):
+    eq: Optional[Any] = Field(alias="_eq", default=None)
+    gt: Optional[Any] = Field(alias="_gt", default=None)
+    gte: Optional[Any] = Field(alias="_gte", default=None)
+    in_: Optional[List[Any]] = Field(alias="_in", default=None)
+    is_null: Optional[bool] = Field(alias="_is_null", default=None)
+    lt: Optional[Any] = Field(alias="_lt", default=None)
+    lte: Optional[Any] = Field(alias="_lte", default=None)
+    neq: Optional[Any] = Field(alias="_neq", default=None)
+    nin: Optional[List[Any]] = Field(alias="_nin", default=None)
+
+
 entries_bool_exp.model_rebuild()
 entries_insert_input.model_rebuild()
 entries_obj_rel_insert_input.model_rebuild()
@@ -717,6 +828,10 @@ link_on_conflict.model_rebuild()
 link_order_by.model_rebuild()
 link_stream_cursor_input.model_rebuild()
 link_updates.model_rebuild()
+subscriptions_bool_exp.model_rebuild()
+subscriptions_on_conflict.model_rebuild()
+subscriptions_stream_cursor_input.model_rebuild()
+subscriptions_updates.model_rebuild()
 tags_bool_exp.model_rebuild()
 tags_insert_input.model_rebuild()
 tags_obj_rel_insert_input.model_rebuild()

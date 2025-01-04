@@ -114,6 +114,36 @@ class order_by(str, Enum):
     desc_nulls_last = "desc_nulls_last"
 
 
+class subscriptions_constraint(str, Enum):
+    subscribers_pkey = "subscribers_pkey"
+
+
+class subscriptions_select_column(str, Enum):
+    created_at = "created_at"
+    email = "email"
+    id = "id"
+    interval = "interval"
+    lat_max = "lat_max"
+    lat_min = "lat_min"
+    lon_max = "lon_max"
+    lon_min = "lon_min"
+    n_emails_sent = "n_emails_sent"
+    updated_at = "updated_at"
+
+
+class subscriptions_update_column(str, Enum):
+    created_at = "created_at"
+    email = "email"
+    id = "id"
+    interval = "interval"
+    lat_max = "lat_max"
+    lat_min = "lat_min"
+    lon_max = "lon_max"
+    lon_min = "lon_min"
+    n_emails_sent = "n_emails_sent"
+    updated_at = "updated_at"
+
+
 class tags_constraint(str, Enum):
     tags_pkey = "tags_pkey"
 

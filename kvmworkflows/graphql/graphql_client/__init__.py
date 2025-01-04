@@ -4,6 +4,10 @@ from .async_base_client import AsyncBaseClient
 from .base_model import BaseModel, Upload
 from .client import Client
 from .delete_entry_tags import DeleteEntryTags, DeleteEntryTagsDeleteEntryTagsByPk
+from .delete_subscriptions_by_pk import (
+    DeleteSubscriptionsByPk,
+    DeleteSubscriptionsByPkDeleteSubscriptionsByPk,
+)
 from .enums import (
     cursor_ordering,
     entries_constraint,
@@ -22,6 +26,9 @@ from .enums import (
     link_select_column,
     link_update_column,
     order_by,
+    subscriptions_constraint,
+    subscriptions_select_column,
+    subscriptions_update_column,
     tags_constraint,
     tags_select_column,
     tags_update_column,
@@ -33,7 +40,16 @@ from .exceptions import (
     GraphQLClientHttpError,
     GraphQLClientInvalidResponseError,
 )
+from .get_entries_by_filters import GetEntriesByFilters, GetEntriesByFiltersEntries
 from .get_entry_tags import GetEntryTags, GetEntryTagsEntryTags
+from .get_exact_subscriptions import (
+    GetExactSubscriptions,
+    GetExactSubscriptionsSubscriptions,
+)
+from .get_subscriptions_by_interval import (
+    GetSubscriptionsByInterval,
+    GetSubscriptionsByIntervalSubscriptions,
+)
 from .input_types import (
     Int_comparison_exp,
     String_comparison_exp,
@@ -114,6 +130,16 @@ from .input_types import (
     link_stream_cursor_value_input,
     link_updates,
     numeric_comparison_exp,
+    subscriptions_bool_exp,
+    subscriptions_inc_input,
+    subscriptions_insert_input,
+    subscriptions_on_conflict,
+    subscriptions_order_by,
+    subscriptions_pk_columns_input,
+    subscriptions_set_input,
+    subscriptions_stream_cursor_input,
+    subscriptions_stream_cursor_value_input,
+    subscriptions_updates,
     tags_bool_exp,
     tags_insert_input,
     tags_obj_rel_insert_input,
@@ -125,9 +151,14 @@ from .input_types import (
     tags_stream_cursor_value_input,
     tags_updates,
     timestamptz_comparison_exp,
+    uuid_comparison_exp,
 )
+from .insert_entries import InsertEntries, InsertEntriesInsertEntries
 from .insert_entry_tags import InsertEntryTags, InsertEntryTagsInsertEntryTags
-from .insert_search_entries import InsertSearchEntries, InsertSearchEntriesInsertEntries
+from .insert_subscriptions_one import (
+    InsertSubscriptionsOne,
+    InsertSubscriptionsOneInsertSubscriptionsOne,
+)
 from .insert_tags import InsertTags, InsertTagsInsertTags
 
 __all__ = [
@@ -136,17 +167,27 @@ __all__ = [
     "Client",
     "DeleteEntryTags",
     "DeleteEntryTagsDeleteEntryTagsByPk",
+    "DeleteSubscriptionsByPk",
+    "DeleteSubscriptionsByPkDeleteSubscriptionsByPk",
+    "GetEntriesByFilters",
+    "GetEntriesByFiltersEntries",
     "GetEntryTags",
     "GetEntryTagsEntryTags",
+    "GetExactSubscriptions",
+    "GetExactSubscriptionsSubscriptions",
+    "GetSubscriptionsByInterval",
+    "GetSubscriptionsByIntervalSubscriptions",
     "GraphQLClientError",
     "GraphQLClientGraphQLError",
     "GraphQLClientGraphQLMultiError",
     "GraphQLClientHttpError",
     "GraphQLClientInvalidResponseError",
+    "InsertEntries",
+    "InsertEntriesInsertEntries",
     "InsertEntryTags",
     "InsertEntryTagsInsertEntryTags",
-    "InsertSearchEntries",
-    "InsertSearchEntriesInsertEntries",
+    "InsertSubscriptionsOne",
+    "InsertSubscriptionsOneInsertSubscriptionsOne",
     "InsertTags",
     "InsertTagsInsertTags",
     "Int_comparison_exp",
@@ -246,6 +287,19 @@ __all__ = [
     "link_updates",
     "numeric_comparison_exp",
     "order_by",
+    "subscriptions_bool_exp",
+    "subscriptions_constraint",
+    "subscriptions_inc_input",
+    "subscriptions_insert_input",
+    "subscriptions_on_conflict",
+    "subscriptions_order_by",
+    "subscriptions_pk_columns_input",
+    "subscriptions_select_column",
+    "subscriptions_set_input",
+    "subscriptions_stream_cursor_input",
+    "subscriptions_stream_cursor_value_input",
+    "subscriptions_update_column",
+    "subscriptions_updates",
     "tags_bool_exp",
     "tags_constraint",
     "tags_insert_input",
@@ -260,4 +314,5 @@ __all__ = [
     "tags_update_column",
     "tags_updates",
     "timestamptz_comparison_exp",
+    "uuid_comparison_exp",
 ]

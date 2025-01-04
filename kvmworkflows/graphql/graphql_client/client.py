@@ -6,14 +6,19 @@ from typing import Any, Dict, List, Optional, Union
 from .async_base_client import AsyncBaseClient
 from .base_model import UNSET, UnsetType
 from .delete_entry_tags import DeleteEntryTags
+from .delete_subscriptions_by_pk import DeleteSubscriptionsByPk
+from .get_entries_by_filters import GetEntriesByFilters
 from .get_entry_tags import GetEntryTags
+from .get_exact_subscriptions import GetExactSubscriptions
+from .get_subscriptions_by_interval import GetSubscriptionsByInterval
 from .input_types import (
     entries_insert_input,
     entry_tags_insert_input,
     tags_insert_input,
 )
+from .insert_entries import InsertEntries
 from .insert_entry_tags import InsertEntryTags
-from .insert_search_entries import InsertSearchEntries
+from .insert_subscriptions_one import InsertSubscriptionsOne
 from .insert_tags import InsertTags
 
 
@@ -22,14 +27,59 @@ def gql(q: str) -> str:
 
 
 class Client(AsyncBaseClient):
-    async def insert_search_entries(
+    async def get_entries_by_filters(
+        self,
+        create_at_gte: Any,
+        create_at_lte: Any,
+        lat_gte: Any,
+        lat_lte: Any,
+        lon_gte: Any,
+        lon_lte: Any,
+        **kwargs: Any
+    ) -> GetEntriesByFilters:
+        query = gql(
+            """
+            query GetEntriesByFilters($create_at_gte: timestamptz!, $create_at_lte: timestamptz!, $lat_gte: numeric!, $lat_lte: numeric!, $lon_gte: numeric!, $lon_lte: numeric!) {
+              entries(
+                where: {_and: {created_at: {_gte: $create_at_gte, _lte: $create_at_lte}, lat: {_gte: $lat_gte, _lte: $lat_lte}, lng: {_gte: $lon_gte, _lte: $lon_lte}}}
+              ) {
+                created_at
+                description
+                lat
+                id
+                lng
+                status
+                title
+                updated_at
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {
+            "create_at_gte": create_at_gte,
+            "create_at_lte": create_at_lte,
+            "lat_gte": lat_gte,
+            "lat_lte": lat_lte,
+            "lon_gte": lon_gte,
+            "lon_lte": lon_lte,
+        }
+        response = await self.execute(
+            query=query,
+            operation_name="GetEntriesByFilters",
+            variables=variables,
+            **kwargs
+        )
+        data = self.get_data(response)
+        return GetEntriesByFilters.model_validate(data)
+
+    async def insert_entries(
         self,
         objects: Union[Optional[List[entries_insert_input]], UnsetType] = UNSET,
         **kwargs: Any
-    ) -> InsertSearchEntries:
+    ) -> InsertEntries:
         query = gql(
             """
-            mutation InsertSearchEntries($objects: [entries_insert_input!] = {}) {
+            mutation InsertEntries($objects: [entries_insert_input!] = {}) {
               insert_entries(
                 objects: $objects
                 on_conflict: {constraint: entries_pkey, update_columns: [id, status, lat, lng, title, description]}
@@ -41,13 +91,10 @@ class Client(AsyncBaseClient):
         )
         variables: Dict[str, object] = {"objects": objects}
         response = await self.execute(
-            query=query,
-            operation_name="InsertSearchEntries",
-            variables=variables,
-            **kwargs
+            query=query, operation_name="InsertEntries", variables=variables, **kwargs
         )
         data = self.get_data(response)
-        return InsertSearchEntries.model_validate(data)
+        return InsertEntries.model_validate(data)
 
     async def insert_tags(
         self,
@@ -133,3 +180,141 @@ class Client(AsyncBaseClient):
         )
         data = self.get_data(response)
         return DeleteEntryTags.model_validate(data)
+
+    async def get_exact_subscriptions(
+        self,
+        email: str,
+        interval: str,
+        lat_min: Any,
+        lon_min: Any,
+        lat_max: Any,
+        lon_max: Any,
+        **kwargs: Any
+    ) -> GetExactSubscriptions:
+        query = gql(
+            """
+            query GetExactSubscriptions($email: String!, $interval: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!) {
+              subscriptions(
+                where: {_and: {email: {_eq: $email}, interval: {_eq: $interval}, lat_min: {_eq: $lat_min}, lon_min: {_eq: $lon_min}, lat_max: {_eq: $lat_max}, lon_max: {_eq: $lon_max}}}
+              ) {
+                id
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {
+            "email": email,
+            "interval": interval,
+            "lat_min": lat_min,
+            "lon_min": lon_min,
+            "lat_max": lat_max,
+            "lon_max": lon_max,
+        }
+        response = await self.execute(
+            query=query,
+            operation_name="GetExactSubscriptions",
+            variables=variables,
+            **kwargs
+        )
+        data = self.get_data(response)
+        return GetExactSubscriptions.model_validate(data)
+
+    async def get_subscriptions_by_interval(
+        self, interval: str, **kwargs: Any
+    ) -> GetSubscriptionsByInterval:
+        query = gql(
+            """
+            query GetSubscriptionsByInterval($interval: String!) {
+              subscriptions(where: {interval: {_eq: $interval}}) {
+                email
+                id
+                lat_min
+                lon_min
+                lat_max
+                lon_max
+                interval
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {"interval": interval}
+        response = await self.execute(
+            query=query,
+            operation_name="GetSubscriptionsByInterval",
+            variables=variables,
+            **kwargs
+        )
+        data = self.get_data(response)
+        return GetSubscriptionsByInterval.model_validate(data)
+
+    async def insert_subscriptions_one(
+        self,
+        interval: str,
+        email: str,
+        lat_min: Any,
+        lon_min: Any,
+        lat_max: Any,
+        lon_max: Any,
+        **kwargs: Any
+    ) -> InsertSubscriptionsOne:
+        query = gql(
+            """
+            mutation InsertSubscriptionsOne($interval: String!, $email: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!) {
+              insert_subscriptions_one(
+                object: {interval: $interval, email: $email, lat_min: $lat_min, lon_min: $lon_min, lat_max: $lat_max, lon_max: $lon_max}
+              ) {
+                id
+                email
+                interval
+                lat_min
+                lon_min
+                lat_max
+                lon_max
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {
+            "interval": interval,
+            "email": email,
+            "lat_min": lat_min,
+            "lon_min": lon_min,
+            "lat_max": lat_max,
+            "lon_max": lon_max,
+        }
+        response = await self.execute(
+            query=query,
+            operation_name="InsertSubscriptionsOne",
+            variables=variables,
+            **kwargs
+        )
+        data = self.get_data(response)
+        return InsertSubscriptionsOne.model_validate(data)
+
+    async def delete_subscriptions_by_pk(
+        self, id: Any, **kwargs: Any
+    ) -> DeleteSubscriptionsByPk:
+        query = gql(
+            """
+            mutation DeleteSubscriptionsByPk($id: uuid!) {
+              delete_subscriptions_by_pk(id: $id) {
+                id
+                email
+                interval
+                lat_min
+                lon_min
+                lat_max
+                lon_max
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {"id": id}
+        response = await self.execute(
+            query=query,
+            operation_name="DeleteSubscriptionsByPk",
+            variables=variables,
+            **kwargs
+        )
+        data = self.get_data(response)
+        return DeleteSubscriptionsByPk.model_validate(data)
