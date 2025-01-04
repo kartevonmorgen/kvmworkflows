@@ -16,6 +16,8 @@ rich = "^13.9.4"
 loguru = "^0.7.3"
 numpy = "^2.2.1"
 tqdm = "^4.67.1"
+fastapi = {extras = ["standard"], version = "^0.115.6"}
+uvicorn = "^0.34.0"
 
 
 [build-system]

@@ -1,10 +1,12 @@
 {
     "cSpell.words": [
+        "bbox",
         "defn",
         "kvmworkflows",
         "lngs",
         "ofdb",
         "pkey",
-        "temporalio"
+        "temporalio",
+        "timestamptz"
     ]
 }
