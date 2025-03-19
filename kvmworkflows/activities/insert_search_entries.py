@@ -1,6 +1,6 @@
 from typing import Iterable
 from temporalio import activity
-from kvmworkflows.graphql.client import client
+from kvmworkflows.graphql.client import graphql_client
 from kvmworkflows.graphql.graphql_client.input_types import entries_insert_input
 from kvmworkflows.models.review_status import ReviewStatus
 from kvmworkflows.models.search_entry import SearchEntry
@@ -22,7 +22,7 @@ async def insert_search_entries(search_entries: Iterable[SearchEntry]) -> None:
             )
         )
     
-    await client.insert_search_entries(inputs)
+    await graphql_client.insert_entries(inputs)
 
 
 async def test_insert_search_entries():
