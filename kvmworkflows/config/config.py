@@ -54,7 +54,7 @@ class AppConfig(BaseModel):
 
 
 class EmailMetadataConfig(BaseModel):
-    from_email: str
+    sender: str
     subject: str
 
 
@@ -62,6 +62,10 @@ class EmailConfig(BaseModel):
     domain: str
     api_key: str
     url: str
+    rate_limit: int
+    max_retries: int
+    retry_delay: int
+    concurrency: int
     area_subscription: EmailMetadataConfig
 
 

@@ -4,6 +4,7 @@
         "defn",
         "kvmworkflows",
         "lngs",
+        "Mailgun",
         "ofdb",
         "pkey",
         "temporalio",
