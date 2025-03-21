@@ -1,8 +1,9 @@
 import hydra
 
+from datetime import date
 from omegaconf import OmegaConf
 from pydantic import BaseModel
-from typing import cast, Any, List, Union, Dict, Tuple, Mapping
+from typing import cast, Any, List, Tuple, Mapping
 from rich import print
 
 
@@ -31,7 +32,44 @@ class Area(BaseModel):
     lng_n_chunks: int
 
 
+class TemporalWorkflowConfig(BaseModel):
+    name: str
+    task_queue: str
+    cron_schedule: str
+
+
+class TemporalWorkflowsConfig(BaseModel):
+    sync_bbox: TemporalWorkflowConfig
+
+
+class TemporalConfig(BaseModel):
+    uri: str
+    workflows: TemporalWorkflowsConfig
+
+
+class AppConfig(BaseModel):
+    title: str
+    host: str
+    port: int
+
+
+class EmailMetadataConfig(BaseModel):
+    from_email: str
+    subject: str
+
+
+class EmailConfig(BaseModel):
+    domain: str
+    api_key: str
+    url: str
+    area_subscription: EmailMetadataConfig
+
+
 class Config(BaseModel):
+    start_date: date
+    app: AppConfig
+    temporal: TemporalConfig
+    email: EmailConfig
     sources: Sources
     sinks: Sinks
     areas: List[Area]
