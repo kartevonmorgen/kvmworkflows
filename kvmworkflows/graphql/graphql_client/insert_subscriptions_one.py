@@ -18,6 +18,7 @@ class InsertSubscriptionsOneInsertSubscriptionsOne(BaseModel):
     lon_min: Any
     lat_max: Any
     lon_max: Any
+    subscription_type: Any
 
 
 InsertSubscriptionsOne.model_rebuild()

@@ -76,6 +76,7 @@ query GetExactSubscriptions(
   $lon_min: numeric!
   $lat_max: numeric!
   $lon_max: numeric!
+  $subscription_type: subscription_enum!
 ) {
   subscriptions(
     where: {
@@ -86,6 +87,7 @@ query GetExactSubscriptions(
         lon_min: { _eq: $lon_min }
         lat_max: { _eq: $lat_max }
         lon_max: { _eq: $lon_max }
+        subscription_type: { _eq: $subscription_type }
       }
     }
   ) {
@@ -93,8 +95,16 @@ query GetExactSubscriptions(
   }
 }
 
-query GetSubscriptionsByInterval($interval: String!) {
-  subscriptions(where: { interval: { _eq: $interval } }) {
+query GetSubscriptionsByInterval(
+  $interval: String!
+  $subscription_type: subscription_enum!
+) {
+  subscriptions(
+    where: {
+      interval: { _eq: $interval }
+      subscription_type: { _eq: $subscription_type }
+    }
+  ) {
     email
     id
     lat_min
@@ -102,6 +112,7 @@ query GetSubscriptionsByInterval($interval: String!) {
     lat_max
     lon_max
     interval
+    subscription_type
   }
 }
 
@@ -112,6 +123,7 @@ mutation InsertSubscriptionsOne(
   $lon_min: numeric!
   $lat_max: numeric!
   $lon_max: numeric!
+  $subscription_type: subscription_enum!
 ) {
   insert_subscriptions_one(
     object: {
@@ -121,6 +133,7 @@ mutation InsertSubscriptionsOne(
       lon_min: $lon_min
       lat_max: $lat_max
       lon_max: $lon_max
+      subscription_type: $subscription_type
     }
   ) {
     id
@@ -130,6 +143,7 @@ mutation InsertSubscriptionsOne(
     lon_min
     lat_max
     lon_max
+    subscription_type
   }
 }
 
@@ -142,5 +156,8 @@ mutation DeleteSubscriptionsByPk($id: uuid!) {
     lon_min
     lat_max
     lon_max
+    subscription_type
+    last_email_sent_at
+    n_emails_sent
   }
 }

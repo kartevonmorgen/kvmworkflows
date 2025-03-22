@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
+
 from kvmworkflows.graphql.client import graphql_client
 from kvmworkflows.models.subscription_interval import SubscriptionInterval
+from kvmworkflows.models.subscription_types import SubscriptionType
 
 
 router = APIRouter()
@@ -15,6 +17,7 @@ class CreateSubscriptionRequest(BaseModel):
     lat_max: float
     lon_max: float
     interval: SubscriptionInterval
+    subscription_type: SubscriptionType
 
 
 class SubscriptionResponse(BaseModel):
@@ -25,6 +28,7 @@ class SubscriptionResponse(BaseModel):
     lat_max: float
     lon_max: float
     interval: SubscriptionInterval
+    subscription_type: SubscriptionType
 
 
 @router.post("/subscribe")
@@ -36,6 +40,7 @@ async def create_subscription(subscription: CreateSubscriptionRequest) -> Subscr
         lon_min=subscription.lon_min,
         lat_max=subscription.lat_max,
         lon_max=subscription.lon_max,
+        subscription_type=subscription.subscription_type,
     )
 
     if subscriptions_response.subscriptions:
@@ -48,6 +53,7 @@ async def create_subscription(subscription: CreateSubscriptionRequest) -> Subscr
         lat_max=subscription.lat_max,
         lon_max=subscription.lon_max,
         interval=subscription.interval,
+        subscription_type=subscription.subscription_type
     )
 
     if insert_subscription_response.insert_subscriptions_one is None:
@@ -62,7 +68,8 @@ async def create_subscription(subscription: CreateSubscriptionRequest) -> Subscr
         lon_min=subscription.lon_min,
         lat_max=subscription.lat_max,
         lon_max=subscription.lon_max,
-        interval=subscription.interval
+        interval=subscription.interval,
+        subscription_type=subscription.subscription_type,
     )
 
     return response
@@ -83,7 +90,8 @@ async def delete_subscription(subscription_id: str) -> SubscriptionResponse:
         lon_min=deleted_subscription.lon_min,
         lat_max=deleted_subscription.lat_max,
         lon_max=deleted_subscription.lon_max,
-        interval=SubscriptionInterval(deleted_subscription.interval)
+        interval=SubscriptionInterval(deleted_subscription.interval),
+        subscription_type=SubscriptionType(deleted_subscription.subscription_type)
     )
 
     return response

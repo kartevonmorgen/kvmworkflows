@@ -606,6 +606,18 @@ class numeric_comparison_exp(BaseModel):
     nin: Optional[List[Any]] = Field(alias="_nin", default=None)
 
 
+class subscription_enum_comparison_exp(BaseModel):
+    eq: Optional[Any] = Field(alias="_eq", default=None)
+    gt: Optional[Any] = Field(alias="_gt", default=None)
+    gte: Optional[Any] = Field(alias="_gte", default=None)
+    in_: Optional[List[Any]] = Field(alias="_in", default=None)
+    is_null: Optional[bool] = Field(alias="_is_null", default=None)
+    lt: Optional[Any] = Field(alias="_lt", default=None)
+    lte: Optional[Any] = Field(alias="_lte", default=None)
+    neq: Optional[Any] = Field(alias="_neq", default=None)
+    nin: Optional[List[Any]] = Field(alias="_nin", default=None)
+
+
 class subscriptions_bool_exp(BaseModel):
     and_: Optional[List["subscriptions_bool_exp"]] = Field(alias="_and", default=None)
     not_: Optional["subscriptions_bool_exp"] = Field(alias="_not", default=None)
@@ -614,11 +626,13 @@ class subscriptions_bool_exp(BaseModel):
     email: Optional["String_comparison_exp"] = None
     id: Optional["uuid_comparison_exp"] = None
     interval: Optional["String_comparison_exp"] = None
+    last_email_sent_at: Optional["timestamptz_comparison_exp"] = None
     lat_max: Optional["numeric_comparison_exp"] = None
     lat_min: Optional["numeric_comparison_exp"] = None
     lon_max: Optional["numeric_comparison_exp"] = None
     lon_min: Optional["numeric_comparison_exp"] = None
     n_emails_sent: Optional["Int_comparison_exp"] = None
+    subscription_type: Optional["subscription_enum_comparison_exp"] = None
     updated_at: Optional["timestamptz_comparison_exp"] = None
 
 
@@ -635,11 +649,13 @@ class subscriptions_insert_input(BaseModel):
     email: Optional[str] = None
     id: Optional[Any] = None
     interval: Optional[str] = None
+    last_email_sent_at: Optional[Any] = None
     lat_max: Optional[Any] = None
     lat_min: Optional[Any] = None
     lon_max: Optional[Any] = None
     lon_min: Optional[Any] = None
     n_emails_sent: Optional[int] = None
+    subscription_type: Optional[Any] = None
     updated_at: Optional[Any] = None
 
 
@@ -654,11 +670,13 @@ class subscriptions_order_by(BaseModel):
     email: Optional[order_by] = None
     id: Optional[order_by] = None
     interval: Optional[order_by] = None
+    last_email_sent_at: Optional[order_by] = None
     lat_max: Optional[order_by] = None
     lat_min: Optional[order_by] = None
     lon_max: Optional[order_by] = None
     lon_min: Optional[order_by] = None
     n_emails_sent: Optional[order_by] = None
+    subscription_type: Optional[order_by] = None
     updated_at: Optional[order_by] = None
 
 
@@ -671,11 +689,13 @@ class subscriptions_set_input(BaseModel):
     email: Optional[str] = None
     id: Optional[Any] = None
     interval: Optional[str] = None
+    last_email_sent_at: Optional[Any] = None
     lat_max: Optional[Any] = None
     lat_min: Optional[Any] = None
     lon_max: Optional[Any] = None
     lon_min: Optional[Any] = None
     n_emails_sent: Optional[int] = None
+    subscription_type: Optional[Any] = None
     updated_at: Optional[Any] = None
 
 
@@ -689,11 +709,13 @@ class subscriptions_stream_cursor_value_input(BaseModel):
     email: Optional[str] = None
     id: Optional[Any] = None
     interval: Optional[str] = None
+    last_email_sent_at: Optional[Any] = None
     lat_max: Optional[Any] = None
     lat_min: Optional[Any] = None
     lon_max: Optional[Any] = None
     lon_min: Optional[Any] = None
     n_emails_sent: Optional[int] = None
+    subscription_type: Optional[Any] = None
     updated_at: Optional[Any] = None
 
 

@@ -123,11 +123,13 @@ class subscriptions_select_column(str, Enum):
     email = "email"
     id = "id"
     interval = "interval"
+    last_email_sent_at = "last_email_sent_at"
     lat_max = "lat_max"
     lat_min = "lat_min"
     lon_max = "lon_max"
     lon_min = "lon_min"
     n_emails_sent = "n_emails_sent"
+    subscription_type = "subscription_type"
     updated_at = "updated_at"
 
 
@@ -136,11 +138,13 @@ class subscriptions_update_column(str, Enum):
     email = "email"
     id = "id"
     interval = "interval"
+    last_email_sent_at = "last_email_sent_at"
     lat_max = "lat_max"
     lat_min = "lat_min"
     lon_max = "lon_max"
     lon_min = "lon_min"
     n_emails_sent = "n_emails_sent"
+    subscription_type = "subscription_type"
     updated_at = "updated_at"
 
 

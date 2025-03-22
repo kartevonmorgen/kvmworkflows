@@ -20,6 +20,9 @@ class DeleteSubscriptionsByPkDeleteSubscriptionsByPk(BaseModel):
     lon_min: Any
     lat_max: Any
     lon_max: Any
+    subscription_type: Any
+    last_email_sent_at: Optional[Any]
+    n_emails_sent: int
 
 
 DeleteSubscriptionsByPk.model_rebuild()

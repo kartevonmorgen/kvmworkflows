@@ -18,6 +18,7 @@ class GetSubscriptionsByIntervalSubscriptions(BaseModel):
     lat_max: Any
     lon_max: Any
     interval: str
+    subscription_type: Any
 
 
 GetSubscriptionsByInterval.model_rebuild()

@@ -189,13 +189,14 @@ class Client(AsyncBaseClient):
         lon_min: Any,
         lat_max: Any,
         lon_max: Any,
+        subscription_type: Any,
         **kwargs: Any
     ) -> GetExactSubscriptions:
         query = gql(
             """
-            query GetExactSubscriptions($email: String!, $interval: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!) {
+            query GetExactSubscriptions($email: String!, $interval: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!, $subscription_type: subscription_enum!) {
               subscriptions(
-                where: {_and: {email: {_eq: $email}, interval: {_eq: $interval}, lat_min: {_eq: $lat_min}, lon_min: {_eq: $lon_min}, lat_max: {_eq: $lat_max}, lon_max: {_eq: $lon_max}}}
+                where: {_and: {email: {_eq: $email}, interval: {_eq: $interval}, lat_min: {_eq: $lat_min}, lon_min: {_eq: $lon_min}, lat_max: {_eq: $lat_max}, lon_max: {_eq: $lon_max}, subscription_type: {_eq: $subscription_type}}}
               ) {
                 id
               }
@@ -209,6 +210,7 @@ class Client(AsyncBaseClient):
             "lon_min": lon_min,
             "lat_max": lat_max,
             "lon_max": lon_max,
+            "subscription_type": subscription_type,
         }
         response = await self.execute(
             query=query,
@@ -220,12 +222,14 @@ class Client(AsyncBaseClient):
         return GetExactSubscriptions.model_validate(data)
 
     async def get_subscriptions_by_interval(
-        self, interval: str, **kwargs: Any
+        self, interval: str, subscription_type: Any, **kwargs: Any
     ) -> GetSubscriptionsByInterval:
         query = gql(
             """
-            query GetSubscriptionsByInterval($interval: String!) {
-              subscriptions(where: {interval: {_eq: $interval}}) {
+            query GetSubscriptionsByInterval($interval: String!, $subscription_type: subscription_enum!) {
+              subscriptions(
+                where: {interval: {_eq: $interval}, subscription_type: {_eq: $subscription_type}}
+              ) {
                 email
                 id
                 lat_min
@@ -233,11 +237,15 @@ class Client(AsyncBaseClient):
                 lat_max
                 lon_max
                 interval
+                subscription_type
               }
             }
             """
         )
-        variables: Dict[str, object] = {"interval": interval}
+        variables: Dict[str, object] = {
+            "interval": interval,
+            "subscription_type": subscription_type,
+        }
         response = await self.execute(
             query=query,
             operation_name="GetSubscriptionsByInterval",
@@ -255,13 +263,14 @@ class Client(AsyncBaseClient):
         lon_min: Any,
         lat_max: Any,
         lon_max: Any,
+        subscription_type: Any,
         **kwargs: Any
     ) -> InsertSubscriptionsOne:
         query = gql(
             """
-            mutation InsertSubscriptionsOne($interval: String!, $email: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!) {
+            mutation InsertSubscriptionsOne($interval: String!, $email: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!, $subscription_type: subscription_enum!) {
               insert_subscriptions_one(
-                object: {interval: $interval, email: $email, lat_min: $lat_min, lon_min: $lon_min, lat_max: $lat_max, lon_max: $lon_max}
+                object: {interval: $interval, email: $email, lat_min: $lat_min, lon_min: $lon_min, lat_max: $lat_max, lon_max: $lon_max, subscription_type: $subscription_type}
               ) {
                 id
                 email
@@ -270,6 +279,7 @@ class Client(AsyncBaseClient):
                 lon_min
                 lat_max
                 lon_max
+                subscription_type
               }
             }
             """
@@ -281,6 +291,7 @@ class Client(AsyncBaseClient):
             "lon_min": lon_min,
             "lat_max": lat_max,
             "lon_max": lon_max,
+            "subscription_type": subscription_type,
         }
         response = await self.execute(
             query=query,
@@ -305,6 +316,9 @@ class Client(AsyncBaseClient):
                 lon_min
                 lat_max
                 lon_max
+                subscription_type
+                last_email_sent_at
+                n_emails_sent
               }
             }
             """
