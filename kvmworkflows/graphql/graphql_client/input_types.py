@@ -29,6 +29,18 @@ from .enums import (
 )
 
 
+class Boolean_comparison_exp(BaseModel):
+    eq: Optional[bool] = Field(alias="_eq", default=None)
+    gt: Optional[bool] = Field(alias="_gt", default=None)
+    gte: Optional[bool] = Field(alias="_gte", default=None)
+    in_: Optional[List[bool]] = Field(alias="_in", default=None)
+    is_null: Optional[bool] = Field(alias="_is_null", default=None)
+    lt: Optional[bool] = Field(alias="_lt", default=None)
+    lte: Optional[bool] = Field(alias="_lte", default=None)
+    neq: Optional[bool] = Field(alias="_neq", default=None)
+    nin: Optional[List[bool]] = Field(alias="_nin", default=None)
+
+
 class Int_comparison_exp(BaseModel):
     eq: Optional[int] = Field(alias="_eq", default=None)
     gt: Optional[int] = Field(alias="_gt", default=None)
@@ -626,6 +638,8 @@ class subscriptions_bool_exp(BaseModel):
     email: Optional["String_comparison_exp"] = None
     id: Optional["uuid_comparison_exp"] = None
     interval: Optional["String_comparison_exp"] = None
+    is_active: Optional["Boolean_comparison_exp"] = None
+    language: Optional["String_comparison_exp"] = None
     last_email_sent_at: Optional["timestamptz_comparison_exp"] = None
     lat_max: Optional["numeric_comparison_exp"] = None
     lat_min: Optional["numeric_comparison_exp"] = None
@@ -649,6 +663,8 @@ class subscriptions_insert_input(BaseModel):
     email: Optional[str] = None
     id: Optional[Any] = None
     interval: Optional[str] = None
+    is_active: Optional[bool] = None
+    language: Optional[str] = None
     last_email_sent_at: Optional[Any] = None
     lat_max: Optional[Any] = None
     lat_min: Optional[Any] = None
@@ -670,6 +686,8 @@ class subscriptions_order_by(BaseModel):
     email: Optional[order_by] = None
     id: Optional[order_by] = None
     interval: Optional[order_by] = None
+    is_active: Optional[order_by] = None
+    language: Optional[order_by] = None
     last_email_sent_at: Optional[order_by] = None
     lat_max: Optional[order_by] = None
     lat_min: Optional[order_by] = None
@@ -689,6 +707,8 @@ class subscriptions_set_input(BaseModel):
     email: Optional[str] = None
     id: Optional[Any] = None
     interval: Optional[str] = None
+    is_active: Optional[bool] = None
+    language: Optional[str] = None
     last_email_sent_at: Optional[Any] = None
     lat_max: Optional[Any] = None
     lat_min: Optional[Any] = None
@@ -709,6 +729,8 @@ class subscriptions_stream_cursor_value_input(BaseModel):
     email: Optional[str] = None
     id: Optional[Any] = None
     interval: Optional[str] = None
+    is_active: Optional[bool] = None
+    language: Optional[str] = None
     last_email_sent_at: Optional[Any] = None
     lat_max: Optional[Any] = None
     lat_min: Optional[Any] = None

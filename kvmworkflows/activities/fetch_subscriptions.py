@@ -8,17 +8,19 @@ from kvmworkflows.models.subscription_types import SubscriptionType
 
 @activity.defn
 async def fetch_subscriptions_by_interval(interval: SubscriptionInterval, subscription_type: SubscriptionType) -> Subscriptions:
-    subscriptions_response = await graphql_client.get_subscriptions_by_interval(interval=interval.value, subscription_type=subscription_type.value)
+    subscriptions_response = await graphql_client.get_active_subscriptions_by_interval(interval=interval.value, subscription_type=subscription_type.value)
     db_subscriptions = subscriptions_response.subscriptions
     subscriptions: Subscriptions = list(
         map(
             lambda db_subscription: Subscription(
+                id=db_subscription.id,
                 email=db_subscription.email,
                 lat_min=db_subscription.lat_min,
                 lon_min=db_subscription.lon_min,
                 lat_max=db_subscription.lat_max,
                 lon_max=db_subscription.lon_max,
                 interval=SubscriptionInterval(db_subscription.interval),
+                subscription_type=SubscriptionType(db_subscription.subscription_type),
             ),
             db_subscriptions,
         )

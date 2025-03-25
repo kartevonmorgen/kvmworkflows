@@ -6,11 +6,11 @@ from typing import Any, List, Optional
 from .base_model import BaseModel
 
 
-class GetSubscriptionsByInterval(BaseModel):
-    subscriptions: List["GetSubscriptionsByIntervalSubscriptions"]
+class GetActiveSubscriptionsByInterval(BaseModel):
+    subscriptions: List["GetActiveSubscriptionsByIntervalSubscriptions"]
 
 
-class GetSubscriptionsByIntervalSubscriptions(BaseModel):
+class GetActiveSubscriptionsByIntervalSubscriptions(BaseModel):
     email: str
     id: Any
     lat_min: Any
@@ -22,4 +22,4 @@ class GetSubscriptionsByIntervalSubscriptions(BaseModel):
     language: Optional[str]
 
 
-GetSubscriptionsByInterval.model_rebuild()
+GetActiveSubscriptionsByInterval.model_rebuild()

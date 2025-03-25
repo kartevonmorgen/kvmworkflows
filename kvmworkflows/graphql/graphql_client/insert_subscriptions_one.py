@@ -19,6 +19,8 @@ class InsertSubscriptionsOneInsertSubscriptionsOne(BaseModel):
     lat_max: Any
     lon_max: Any
     subscription_type: Any
+    language: Optional[str]
+    is_active: bool
 
 
 InsertSubscriptionsOne.model_rebuild()

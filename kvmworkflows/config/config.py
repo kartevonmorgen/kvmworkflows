@@ -3,7 +3,7 @@ import hydra
 from datetime import date
 from omegaconf import OmegaConf
 from pydantic import BaseModel
-from typing import cast, Any, List, Tuple, Mapping
+from typing import cast, Any, List, Tuple, Mapping, Optional
 from rich import print
 
 
@@ -56,6 +56,9 @@ class AppConfig(BaseModel):
 class EmailMetadataConfig(BaseModel):
     sender: str
     subject: str
+    template: str
+    unsubscribe_url: Optional[str] = None
+    start_to_close_timeout_seconds: int
 
 
 class EmailConfig(BaseModel):
@@ -66,7 +69,8 @@ class EmailConfig(BaseModel):
     max_retries: int
     retry_delay: int
     concurrency: int
-    area_subscription: EmailMetadataConfig
+    test_email_recipient: Optional[str] = None
+    area_subscription_creates: EmailMetadataConfig
 
 
 class Config(BaseModel):

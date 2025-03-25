@@ -1,6 +1,5 @@
 from datetime import date
 from temporalio import activity
-from uuid import UUID
 from rich import print
 from kvmworkflows.graphql.client import graphql_client
 from kvmworkflows.models.entries import Entries, Entry
@@ -9,7 +8,7 @@ from kvmworkflows.config.config import config
 
 
 @activity.defn
-async def fetch_entries_by_filters(
+async def fetch_created_entries_by_filters(
     start: date,
     end: date,
     lat_min: float,
@@ -33,7 +32,7 @@ async def fetch_entries_by_filters(
     entries = list(
         map(
             lambda db_entry: Entry(
-                id=UUID(db_entry.id),
+                id=db_entry.id,
                 created_at=db_entry.created_at,
                 updated_at=db_entry.updated_at,
                 title=db_entry.title,
@@ -50,7 +49,7 @@ async def fetch_entries_by_filters(
 
 
 async def test_fetch_entries_by_create_interval():
-    entries = await fetch_entries_by_filters(
+    entries = await fetch_created_entries_by_filters(
         date(2024, 12, 21),
         date(2024, 12, 23),
         lat_min=50.74,

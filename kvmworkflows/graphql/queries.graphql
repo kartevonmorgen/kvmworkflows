@@ -26,7 +26,7 @@ query GetEntriesByFilters(
   }
 }
 
-mutation InsertEntries($objects: [entries_insert_input!] = {}) {
+mutation UpsertEntries($objects: [entries_insert_input!] = {}) {
   insert_entries(
     objects: $objects
     on_conflict: {
@@ -77,6 +77,8 @@ query GetExactSubscriptions(
   $lat_max: numeric!
   $lon_max: numeric!
   $subscription_type: subscription_enum!
+  $language: String!
+  $is_active: Boolean = true
 ) {
   subscriptions(
     where: {
@@ -88,6 +90,8 @@ query GetExactSubscriptions(
         lat_max: { _eq: $lat_max }
         lon_max: { _eq: $lon_max }
         subscription_type: { _eq: $subscription_type }
+        language: { _eq: $language }
+        is_active: { _eq: $is_active }
       }
     }
   ) {
@@ -95,7 +99,7 @@ query GetExactSubscriptions(
   }
 }
 
-query GetSubscriptionsByInterval(
+query GetActiveSubscriptionsByInterval(
   $interval: String!
   $subscription_type: subscription_enum!
 ) {
@@ -113,6 +117,7 @@ query GetSubscriptionsByInterval(
     lon_max
     interval
     subscription_type
+    language
   }
 }
 
@@ -124,6 +129,7 @@ mutation InsertSubscriptionsOne(
   $lat_max: numeric!
   $lon_max: numeric!
   $subscription_type: subscription_enum!
+  $language: String!
 ) {
   insert_subscriptions_one(
     object: {
@@ -134,6 +140,7 @@ mutation InsertSubscriptionsOne(
       lat_max: $lat_max
       lon_max: $lon_max
       subscription_type: $subscription_type
+      language: $language
     }
   ) {
     id
@@ -144,6 +151,8 @@ mutation InsertSubscriptionsOne(
     lat_max
     lon_max
     subscription_type
+    language
+    is_active
   }
 }
 
@@ -159,5 +168,28 @@ mutation DeleteSubscriptionsByPk($id: uuid!) {
     subscription_type
     last_email_sent_at
     n_emails_sent
+    language
+    is_active
+  }
+}
+
+
+mutation DeactivateSubscription($id: uuid!) {
+  update_subscriptions_by_pk(
+    pk_columns: { id: $id }
+    _set: { is_active: false }
+  ) {
+    id
+    email
+    interval
+    lat_min
+    lon_min
+    lat_max
+    lon_max
+    subscription_type
+    last_email_sent_at
+    n_emails_sent
+    language
+    is_active
   }
 }

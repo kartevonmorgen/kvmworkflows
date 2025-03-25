@@ -5,21 +5,22 @@ from typing import Any, Dict, List, Optional, Union
 
 from .async_base_client import AsyncBaseClient
 from .base_model import UNSET, UnsetType
+from .deactivate_subscription import DeactivateSubscription
 from .delete_entry_tags import DeleteEntryTags
 from .delete_subscriptions_by_pk import DeleteSubscriptionsByPk
+from .get_active_subscriptions_by_interval import GetActiveSubscriptionsByInterval
 from .get_entries_by_filters import GetEntriesByFilters
 from .get_entry_tags import GetEntryTags
 from .get_exact_subscriptions import GetExactSubscriptions
-from .get_subscriptions_by_interval import GetSubscriptionsByInterval
 from .input_types import (
     entries_insert_input,
     entry_tags_insert_input,
     tags_insert_input,
 )
-from .insert_entries import InsertEntries
 from .insert_entry_tags import InsertEntryTags
 from .insert_subscriptions_one import InsertSubscriptionsOne
 from .insert_tags import InsertTags
+from .upsert_entries import UpsertEntries
 
 
 def gql(q: str) -> str:
@@ -72,14 +73,14 @@ class Client(AsyncBaseClient):
         data = self.get_data(response)
         return GetEntriesByFilters.model_validate(data)
 
-    async def insert_entries(
+    async def upsert_entries(
         self,
         objects: Union[Optional[List[entries_insert_input]], UnsetType] = UNSET,
         **kwargs: Any
-    ) -> InsertEntries:
+    ) -> UpsertEntries:
         query = gql(
             """
-            mutation InsertEntries($objects: [entries_insert_input!] = {}) {
+            mutation UpsertEntries($objects: [entries_insert_input!] = {}) {
               insert_entries(
                 objects: $objects
                 on_conflict: {constraint: entries_pkey, update_columns: [id, status, lat, lng, title, description]}
@@ -91,10 +92,10 @@ class Client(AsyncBaseClient):
         )
         variables: Dict[str, object] = {"objects": objects}
         response = await self.execute(
-            query=query, operation_name="InsertEntries", variables=variables, **kwargs
+            query=query, operation_name="UpsertEntries", variables=variables, **kwargs
         )
         data = self.get_data(response)
-        return InsertEntries.model_validate(data)
+        return UpsertEntries.model_validate(data)
 
     async def insert_tags(
         self,
@@ -190,13 +191,15 @@ class Client(AsyncBaseClient):
         lat_max: Any,
         lon_max: Any,
         subscription_type: Any,
+        language: str,
+        is_active: Union[Optional[bool], UnsetType] = UNSET,
         **kwargs: Any
     ) -> GetExactSubscriptions:
         query = gql(
             """
-            query GetExactSubscriptions($email: String!, $interval: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!, $subscription_type: subscription_enum!) {
+            query GetExactSubscriptions($email: String!, $interval: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!, $subscription_type: subscription_enum!, $language: String!, $is_active: Boolean = true) {
               subscriptions(
-                where: {_and: {email: {_eq: $email}, interval: {_eq: $interval}, lat_min: {_eq: $lat_min}, lon_min: {_eq: $lon_min}, lat_max: {_eq: $lat_max}, lon_max: {_eq: $lon_max}, subscription_type: {_eq: $subscription_type}}}
+                where: {_and: {email: {_eq: $email}, interval: {_eq: $interval}, lat_min: {_eq: $lat_min}, lon_min: {_eq: $lon_min}, lat_max: {_eq: $lat_max}, lon_max: {_eq: $lon_max}, subscription_type: {_eq: $subscription_type}, language: {_eq: $language}, is_active: {_eq: $is_active}}}
               ) {
                 id
               }
@@ -211,6 +214,8 @@ class Client(AsyncBaseClient):
             "lat_max": lat_max,
             "lon_max": lon_max,
             "subscription_type": subscription_type,
+            "language": language,
+            "is_active": is_active,
         }
         response = await self.execute(
             query=query,
@@ -221,12 +226,12 @@ class Client(AsyncBaseClient):
         data = self.get_data(response)
         return GetExactSubscriptions.model_validate(data)
 
-    async def get_subscriptions_by_interval(
+    async def get_active_subscriptions_by_interval(
         self, interval: str, subscription_type: Any, **kwargs: Any
-    ) -> GetSubscriptionsByInterval:
+    ) -> GetActiveSubscriptionsByInterval:
         query = gql(
             """
-            query GetSubscriptionsByInterval($interval: String!, $subscription_type: subscription_enum!) {
+            query GetActiveSubscriptionsByInterval($interval: String!, $subscription_type: subscription_enum!) {
               subscriptions(
                 where: {interval: {_eq: $interval}, subscription_type: {_eq: $subscription_type}}
               ) {
@@ -238,6 +243,7 @@ class Client(AsyncBaseClient):
                 lon_max
                 interval
                 subscription_type
+                language
               }
             }
             """
@@ -248,12 +254,12 @@ class Client(AsyncBaseClient):
         }
         response = await self.execute(
             query=query,
-            operation_name="GetSubscriptionsByInterval",
+            operation_name="GetActiveSubscriptionsByInterval",
             variables=variables,
             **kwargs
         )
         data = self.get_data(response)
-        return GetSubscriptionsByInterval.model_validate(data)
+        return GetActiveSubscriptionsByInterval.model_validate(data)
 
     async def insert_subscriptions_one(
         self,
@@ -264,13 +270,14 @@ class Client(AsyncBaseClient):
         lat_max: Any,
         lon_max: Any,
         subscription_type: Any,
+        language: str,
         **kwargs: Any
     ) -> InsertSubscriptionsOne:
         query = gql(
             """
-            mutation InsertSubscriptionsOne($interval: String!, $email: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!, $subscription_type: subscription_enum!) {
+            mutation InsertSubscriptionsOne($interval: String!, $email: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!, $subscription_type: subscription_enum!, $language: String!) {
               insert_subscriptions_one(
-                object: {interval: $interval, email: $email, lat_min: $lat_min, lon_min: $lon_min, lat_max: $lat_max, lon_max: $lon_max, subscription_type: $subscription_type}
+                object: {interval: $interval, email: $email, lat_min: $lat_min, lon_min: $lon_min, lat_max: $lat_max, lon_max: $lon_max, subscription_type: $subscription_type, language: $language}
               ) {
                 id
                 email
@@ -280,6 +287,8 @@ class Client(AsyncBaseClient):
                 lat_max
                 lon_max
                 subscription_type
+                language
+                is_active
               }
             }
             """
@@ -292,6 +301,7 @@ class Client(AsyncBaseClient):
             "lat_max": lat_max,
             "lon_max": lon_max,
             "subscription_type": subscription_type,
+            "language": language,
         }
         response = await self.execute(
             query=query,
@@ -319,6 +329,8 @@ class Client(AsyncBaseClient):
                 subscription_type
                 last_email_sent_at
                 n_emails_sent
+                language
+                is_active
               }
             }
             """
@@ -332,3 +344,36 @@ class Client(AsyncBaseClient):
         )
         data = self.get_data(response)
         return DeleteSubscriptionsByPk.model_validate(data)
+
+    async def deactivate_subscription(
+        self, id: Any, **kwargs: Any
+    ) -> DeactivateSubscription:
+        query = gql(
+            """
+            mutation DeactivateSubscription($id: uuid!) {
+              update_subscriptions_by_pk(pk_columns: {id: $id}, _set: {is_active: false}) {
+                id
+                email
+                interval
+                lat_min
+                lon_min
+                lat_max
+                lon_max
+                subscription_type
+                last_email_sent_at
+                n_emails_sent
+                language
+                is_active
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {"id": id}
+        response = await self.execute(
+            query=query,
+            operation_name="DeactivateSubscription",
+            variables=variables,
+            **kwargs
+        )
+        data = self.get_data(response)
+        return DeactivateSubscription.model_validate(data)

@@ -3,6 +3,10 @@
 from .async_base_client import AsyncBaseClient
 from .base_model import BaseModel, Upload
 from .client import Client
+from .deactivate_subscription import (
+    DeactivateSubscription,
+    DeactivateSubscriptionUpdateSubscriptionsByPk,
+)
 from .delete_entry_tags import DeleteEntryTags, DeleteEntryTagsDeleteEntryTagsByPk
 from .delete_subscriptions_by_pk import (
     DeleteSubscriptionsByPk,
@@ -40,17 +44,18 @@ from .exceptions import (
     GraphQLClientHttpError,
     GraphQLClientInvalidResponseError,
 )
+from .get_active_subscriptions_by_interval import (
+    GetActiveSubscriptionsByInterval,
+    GetActiveSubscriptionsByIntervalSubscriptions,
+)
 from .get_entries_by_filters import GetEntriesByFilters, GetEntriesByFiltersEntries
 from .get_entry_tags import GetEntryTags, GetEntryTagsEntryTags
 from .get_exact_subscriptions import (
     GetExactSubscriptions,
     GetExactSubscriptionsSubscriptions,
 )
-from .get_subscriptions_by_interval import (
-    GetSubscriptionsByInterval,
-    GetSubscriptionsByIntervalSubscriptions,
-)
 from .input_types import (
+    Boolean_comparison_exp,
     Int_comparison_exp,
     String_comparison_exp,
     entries_bool_exp,
@@ -154,37 +159,38 @@ from .input_types import (
     timestamptz_comparison_exp,
     uuid_comparison_exp,
 )
-from .insert_entries import InsertEntries, InsertEntriesInsertEntries
 from .insert_entry_tags import InsertEntryTags, InsertEntryTagsInsertEntryTags
 from .insert_subscriptions_one import (
     InsertSubscriptionsOne,
     InsertSubscriptionsOneInsertSubscriptionsOne,
 )
 from .insert_tags import InsertTags, InsertTagsInsertTags
+from .upsert_entries import UpsertEntries, UpsertEntriesInsertEntries
 
 __all__ = [
     "AsyncBaseClient",
     "BaseModel",
+    "Boolean_comparison_exp",
     "Client",
+    "DeactivateSubscription",
+    "DeactivateSubscriptionUpdateSubscriptionsByPk",
     "DeleteEntryTags",
     "DeleteEntryTagsDeleteEntryTagsByPk",
     "DeleteSubscriptionsByPk",
     "DeleteSubscriptionsByPkDeleteSubscriptionsByPk",
+    "GetActiveSubscriptionsByInterval",
+    "GetActiveSubscriptionsByIntervalSubscriptions",
     "GetEntriesByFilters",
     "GetEntriesByFiltersEntries",
     "GetEntryTags",
     "GetEntryTagsEntryTags",
     "GetExactSubscriptions",
     "GetExactSubscriptionsSubscriptions",
-    "GetSubscriptionsByInterval",
-    "GetSubscriptionsByIntervalSubscriptions",
     "GraphQLClientError",
     "GraphQLClientGraphQLError",
     "GraphQLClientGraphQLMultiError",
     "GraphQLClientHttpError",
     "GraphQLClientInvalidResponseError",
-    "InsertEntries",
-    "InsertEntriesInsertEntries",
     "InsertEntryTags",
     "InsertEntryTagsInsertEntryTags",
     "InsertSubscriptionsOne",
@@ -194,6 +200,8 @@ __all__ = [
     "Int_comparison_exp",
     "String_comparison_exp",
     "Upload",
+    "UpsertEntries",
+    "UpsertEntriesInsertEntries",
     "cursor_ordering",
     "entries_bool_exp",
     "entries_constraint",

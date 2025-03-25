@@ -19,6 +19,7 @@ tqdm = "^4.67.1"
 fastapi = {extras = ["standard"], version = "^0.115.6"}
 uvicorn = "^0.34.0"
 ariadne-codegen = "^0.14.0"
+python-liquid = "^2.0.1"
 
 
 [build-system]

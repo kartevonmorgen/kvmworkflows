@@ -5,6 +5,7 @@ import time
 from pydantic import BaseModel, Field
 from loguru import logger
 from typing import List, Dict, Any, Optional, Union, cast
+from sys import exit
 
 from kvmworkflows.config.config import config
 
@@ -13,8 +14,9 @@ class EmailMessage(BaseModel):
     sender: str = Field(..., examples=["Test <noreply@dev.kartevonmorgen.org>"])
     to: Union[str, List[str]]
     subject: str
-    text: str
+    text: Optional[str] = None
     html: Optional[str] = None
+    unsubscribe_link: Optional[str] = None
 
 
 class MailgunSender:
@@ -110,6 +112,8 @@ class MailgunSender:
 
         if message.html:
             data["html"] = message.html
+        if message.unsubscribe_link:
+            data["h:List-Unsubscribe"] = message.unsubscribe_link  # Add unsubscribe header
             
         response: Optional[Dict[str, Any]] = None
         for attempt in range(self.max_retries):
@@ -174,7 +178,13 @@ def test_send_email(sender: str, to: str, subject: str, text: str):
 
 async def test_send_email_async(sender: str, to: str, subject: str, text: str):
     """Example of sending an email asynchronously"""
-    message = EmailMessage(sender=sender, to=to, subject=subject, text=text)
+    message = EmailMessage(
+        sender=sender,
+        to=to,
+        subject=subject,
+        # text=text
+        html='<h1>Hello</h1><p>Hello, World!</p><a href="https://google.com">Unsubscribe</a>'
+    )
     mail_sender = MailgunSender(domain=config.email.domain, api_key=config.email.api_key)
     try:
         result = await mail_sender.send_email_async(message)
@@ -188,10 +198,11 @@ async def test_send_many_emails(recipients: List[str], subject: str, text: str):
     """Example of sending emails to many recipients efficiently"""
     messages = [
         EmailMessage(
-            sender=config.email.area_subscription.sender,
+            sender=config.email.area_subscription_creates.sender,
             to=recipient,
             subject=subject,
             text=text,
+            unsubscribe_link="https://example.com/unsubscribe",
         )
         for recipient in recipients
     ]
@@ -208,13 +219,18 @@ async def test_send_many_emails(recipients: List[str], subject: str, text: str):
 
 
 if __name__ == "__main__":
+    recipient = config.email.test_email_recipient
+    if recipient is None:
+        logger.error("Please set the test_email_recipient in the config")
+        exit(1)
+    
     # Single email example
-    # test_send_email(config.email.area_subscription.sender, "navidkalaei@gmail.com", "Hello", "Hello, World!")
+    # test_send_email(config.email.area_subscription.sender, recipient, "Hello", "Hello, World!")
 
     # Asynchronous ingle email example
     asyncio.run(test_send_email_async(
-        config.email.area_subscription.sender,
-        "navidkalaei@gmail.com",
+        config.email.area_subscription_creates.sender,
+        recipient,
         "Hello",
         "Hello, World!",
         )
@@ -222,7 +238,7 @@ if __name__ == "__main__":
 
     # Bulk email example
     # asyncio.run(test_send_many_emails(
-    #     ['navidkalaei@gmail.com', 'navidkalaei@gmail.com'],
+    #     [recipient, recipient],
     #     'Bulk email test',
     #     'This is a test of bulk email sending'
     # ))

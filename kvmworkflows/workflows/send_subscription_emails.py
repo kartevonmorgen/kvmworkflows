@@ -1,13 +1,18 @@
-import asyncio
-
 from datetime import timedelta
 from temporalio import workflow
+from typing import List
+
+from kvmworkflows.config.config import config
+from kvmworkflows.models.subscription_types import SubscriptionType
+from kvmworkflows.mail.mailngun import EmailMessage
 
 
 with workflow.unsafe.imports_passed_through():
     from kvmworkflows.models.subscription_interval import SubscriptionInterval
-    from kvmworkflows.activities.fetch_entries import fetch_entries_by_filters
-    from kvmworkflows.activities.send_subscription_emails import send_subscription_email
+    from kvmworkflows.activities.fetch_entries import fetch_created_entries_by_filters
+    from kvmworkflows.activities.send_emails import (
+        send_emails,
+    )
     from kvmworkflows.activities.fetch_subscriptions import (
         fetch_subscriptions_by_interval,
     )
@@ -16,18 +21,22 @@ with workflow.unsafe.imports_passed_through():
 @workflow.defn
 class Workflow:
     @workflow.run
-    async def run(self, interval: SubscriptionInterval):
+    async def run(
+        self,
+        interval: SubscriptionInterval,
+        subscription_type: SubscriptionType
+    ):
         subscriptions = await workflow.execute_activity(
             fetch_subscriptions_by_interval,
-            interval,
+            args=(interval, subscription_type),
             start_to_close_timeout=timedelta(seconds=300),
         )
 
-        tasks = []
+        email_messages: List[EmailMessage] = []
         start, end = interval.passed_interval_dates
         for subscription in subscriptions:
             entries = await workflow.execute_activity(
-                fetch_entries_by_filters,
+                fetch_created_entries_by_filters,
                 args=(
                     start,
                     end,
@@ -40,14 +49,19 @@ class Workflow:
             )
 
             for entry in entries:
-                task = await workflow.execute_activity(
-                    send_subscription_email,
-                    args=(
-                        subscription.email,
-                        entry,
-                    ),
-                    start_to_close_timeout=timedelta(seconds=300),
+                email_message: EmailMessage = EmailMessage(
+                    sender=config.email.area_subscription_creates.sender,
+                    to=subscription.email,
+                    subject=config.email.area_subscription_creates.subject,
+                    html=entry.to_creates_html(),
+                    unsubscribe_link=entry.unsubscribe_link,
                 )
-                tasks.append(task)
+                email_messages.append(email_message)
 
-        asyncio.gather(*tasks)
+        await workflow.execute_activity(
+            send_emails,
+            args=(email_messages,),
+            start_to_close_timeout=timedelta(
+                seconds=config.email.area_subscription_creates.start_to_close_timeout_seconds
+            ),
+        )

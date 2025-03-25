@@ -6,13 +6,13 @@ from typing import Any, Optional
 from .base_model import BaseModel
 
 
-class DeleteSubscriptionsByPk(BaseModel):
-    delete_subscriptions_by_pk: Optional[
-        "DeleteSubscriptionsByPkDeleteSubscriptionsByPk"
+class DeactivateSubscription(BaseModel):
+    update_subscriptions_by_pk: Optional[
+        "DeactivateSubscriptionUpdateSubscriptionsByPk"
     ]
 
 
-class DeleteSubscriptionsByPkDeleteSubscriptionsByPk(BaseModel):
+class DeactivateSubscriptionUpdateSubscriptionsByPk(BaseModel):
     id: Any
     email: str
     interval: str
@@ -27,4 +27,4 @@ class DeleteSubscriptionsByPkDeleteSubscriptionsByPk(BaseModel):
     is_active: bool
 
 
-DeleteSubscriptionsByPk.model_rebuild()
+DeactivateSubscription.model_rebuild()
