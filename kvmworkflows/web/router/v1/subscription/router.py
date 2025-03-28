@@ -57,7 +57,7 @@ async def create_subscription(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
-                "message": "Subscription already exists",
+                "message": "Similar subscription already exists",
                 "subscription": {
                     "id": subscriptions_response.subscriptions[0].id,
                 },

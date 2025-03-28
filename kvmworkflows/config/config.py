@@ -58,11 +58,18 @@ class TemporalConfig(BaseModel):
     workflows: TemporalWorkflowsConfig
 
 
+class AppCorsConfig(BaseModel):
+    allowed_origins: List[str]
+    allowed_methods: List[str]
+    allowed_headers: List[str]
+    allow_credentials: bool
+
+
 class AppConfig(BaseModel):
     title: str
     host: str
     port: int
-
+    cors: AppCorsConfig
 
 class EmailMetadataConfig(BaseModel):
     sender: str
