@@ -45,6 +45,7 @@ class TemporalAreaSubscriptionsEntryCreationConfig(BaseModel):
 
 
 class TemporalAreaSubscriptionsConfig(BaseModel):
+    limit: int
     entry_creation: TemporalAreaSubscriptionsEntryCreationConfig
 
 
@@ -70,6 +71,7 @@ class AppConfig(BaseModel):
     host: str
     port: int
     cors: AppCorsConfig
+
 
 class EmailMetadataConfig(BaseModel):
     sender: str

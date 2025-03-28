@@ -32,6 +32,7 @@ async def fetch_created_entries_by_filters(
         lon_gte=lon_min,
         lat_lte=lat_max,
         lon_lte=lon_max,
+        limit=config.temporal.workflows.area_subscription.limit,
     )
     db_entries = entries_result.entries
     entries = list(

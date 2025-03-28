@@ -36,13 +36,16 @@ class Client(AsyncBaseClient):
         lat_lte: Any,
         lon_gte: Any,
         lon_lte: Any,
+        limit: Union[Optional[int], UnsetType] = UNSET,
         **kwargs: Any
     ) -> GetEntriesByFilters:
         query = gql(
             """
-            query GetEntriesByFilters($create_at_gte: timestamptz!, $create_at_lte: timestamptz!, $lat_gte: numeric!, $lat_lte: numeric!, $lon_gte: numeric!, $lon_lte: numeric!) {
+            query GetEntriesByFilters($create_at_gte: timestamptz!, $create_at_lte: timestamptz!, $lat_gte: numeric!, $lat_lte: numeric!, $lon_gte: numeric!, $lon_lte: numeric!, $limit: Int = 10) {
               entries(
+                order_by: {updated_at: desc}
                 where: {_and: {created_at: {_gte: $create_at_gte, _lte: $create_at_lte}, lat: {_gte: $lat_gte, _lte: $lat_lte}, lng: {_gte: $lon_gte, _lte: $lon_lte}}}
+                limit: $limit
               ) {
                 created_at
                 description
@@ -64,6 +67,7 @@ class Client(AsyncBaseClient):
             "lat_lte": lat_lte,
             "lon_gte": lon_gte,
             "lon_lte": lon_lte,
+            "limit": limit,
         }
         response = await self.execute(
             query=query,

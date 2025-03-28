@@ -5,8 +5,10 @@ query GetEntriesByFilters(
   $lat_lte: numeric!
   $lon_gte: numeric!
   $lon_lte: numeric!
+  $limit: Int = 10
 ) {
   entries(
+    order_by: {updated_at: desc}
     where: {
       _and: {
         created_at: { _gte: $create_at_gte, _lte: $create_at_lte }
@@ -14,6 +16,7 @@ query GetEntriesByFilters(
         lng: { _gte: $lon_gte, _lte: $lon_lte }
       }
     }
+    limit: $limit
   ) {
     created_at
     description
