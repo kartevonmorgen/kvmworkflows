@@ -37,7 +37,27 @@ class SubscriptionResponse(BaseModel):
     is_active: bool
 
 
-@router.post("/subscribe")
+@router.post("/subscribe", 
+    responses={
+        status.HTTP_200_OK: {"description": "Subscription created successfully"},
+        status.HTTP_409_CONFLICT: {
+            "description": "Similar subscription already exists",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": {
+                            "message": "Similar subscription already exists",
+                            "subscription": {
+                                "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {"description": "Failed to create subscription"}
+    }
+)
 async def create_subscription(
     subscription: CreateSubscriptionRequest,
 ) -> SubscriptionResponse:
