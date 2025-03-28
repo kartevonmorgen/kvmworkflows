@@ -18,6 +18,7 @@ async def fetch_subscriptions_by_interval(
         map(
             lambda db_subscription: Subscription(
                 id=db_subscription.id,
+                title=db_subscription.title,
                 email=db_subscription.email,
                 lat_min=db_subscription.lat_min,
                 lon_min=db_subscription.lon_min,

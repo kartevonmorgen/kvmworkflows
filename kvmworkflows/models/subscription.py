@@ -6,6 +6,7 @@ from kvmworkflows.models.subscription_types import EntrySubscriptionType
 
 class Subscription(BaseModel):
     id: str
+    title: str
     email: EmailStr
     lat_min: float
     lon_min: float

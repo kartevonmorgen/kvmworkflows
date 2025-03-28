@@ -33,6 +33,7 @@ async def create_entries_email_messages(
 if __name__ == "__main__":
     subscription = Subscription(
         id="19b8fe6e-9302-4b3c-a455-5b4ef048645b",
+        title="Test subscription",
         email="navidkalaei@gmail.com",
         lat_min=45.5,
         lon_min=8.0,
