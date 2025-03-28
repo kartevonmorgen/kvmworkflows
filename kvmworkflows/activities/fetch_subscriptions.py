@@ -35,7 +35,7 @@ async def fetch_subscriptions_by_interval(
 
 async def test_fetch_subscriptions_by_interval():
     subscriptions = await fetch_subscriptions_by_interval(
-        SubscriptionInterval.DAILY, EntrySubscriptionType.CREATION
+        SubscriptionInterval.DAILY, EntrySubscriptionType.CREATES
     )
     print(subscriptions[:2])
 

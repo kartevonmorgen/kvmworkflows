@@ -13,10 +13,11 @@ class GetEntriesByFilters(BaseModel):
 class GetEntriesByFiltersEntries(BaseModel):
     created_at: Any
     description: str
-    lat: Any
     id: str
+    lat: Any
     lng: Any
     status: str
+    title: str
     title: str
     updated_at: Any
 

@@ -14,6 +14,7 @@ class DeleteSubscriptionsByPk(BaseModel):
 
 class DeleteSubscriptionsByPkDeleteSubscriptionsByPk(BaseModel):
     id: Any
+    title: str
     email: str
     interval: str
     lat_min: Any

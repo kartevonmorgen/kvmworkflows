@@ -13,13 +13,14 @@ class GetActiveSubscriptionsByInterval(BaseModel):
 class GetActiveSubscriptionsByIntervalSubscriptions(BaseModel):
     email: str
     id: Any
-    lat_min: Any
-    lon_min: Any
-    lat_max: Any
-    lon_max: Any
     interval: str
-    subscription_type: Any
     language: Optional[str]
+    lat_max: Any
+    lat_min: Any
+    lon_max: Any
+    lon_min: Any
+    subscription_type: Any
+    title: str
 
 
 GetActiveSubscriptionsByInterval.model_rebuild()

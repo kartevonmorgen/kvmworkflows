@@ -17,10 +17,11 @@ query GetEntriesByFilters(
   ) {
     created_at
     description
-    lat
     id
+    lat
     lng
     status
+    title
     title
     updated_at
   }
@@ -111,17 +112,19 @@ query GetActiveSubscriptionsByInterval(
   ) {
     email
     id
-    lat_min
-    lon_min
-    lat_max
-    lon_max
     interval
-    subscription_type
     language
+    lat_max
+    lat_min
+    lon_max
+    lon_min
+    subscription_type
+    title
   }
 }
 
 mutation InsertSubscriptionsOne(
+  $title: String!
   $interval: String!
   $email: String!
   $lat_min: numeric!
@@ -133,6 +136,7 @@ mutation InsertSubscriptionsOne(
 ) {
   insert_subscriptions_one(
     object: {
+      title: $title
       interval: $interval
       email: $email
       lat_min: $lat_min
@@ -144,6 +148,7 @@ mutation InsertSubscriptionsOne(
     }
   ) {
     id
+    title
     email
     interval
     lat_min
@@ -159,6 +164,7 @@ mutation InsertSubscriptionsOne(
 mutation DeleteSubscriptionsByPk($id: uuid!) {
   delete_subscriptions_by_pk(id: $id) {
     id
+    title
     email
     interval
     lat_min
@@ -180,6 +186,7 @@ mutation DeactivateSubscription($id: uuid!) {
     _set: { is_active: false }
   ) {
     id
+    title
     email
     interval
     lat_min

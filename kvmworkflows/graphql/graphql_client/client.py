@@ -46,10 +46,11 @@ class Client(AsyncBaseClient):
               ) {
                 created_at
                 description
-                lat
                 id
+                lat
                 lng
                 status
+                title
                 title
                 updated_at
               }
@@ -237,13 +238,14 @@ class Client(AsyncBaseClient):
               ) {
                 email
                 id
-                lat_min
-                lon_min
-                lat_max
-                lon_max
                 interval
-                subscription_type
                 language
+                lat_max
+                lat_min
+                lon_max
+                lon_min
+                subscription_type
+                title
               }
             }
             """
@@ -263,6 +265,7 @@ class Client(AsyncBaseClient):
 
     async def insert_subscriptions_one(
         self,
+        title: str,
         interval: str,
         email: str,
         lat_min: Any,
@@ -275,11 +278,12 @@ class Client(AsyncBaseClient):
     ) -> InsertSubscriptionsOne:
         query = gql(
             """
-            mutation InsertSubscriptionsOne($interval: String!, $email: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!, $subscription_type: subscription_enum!, $language: String!) {
+            mutation InsertSubscriptionsOne($title: String!, $interval: String!, $email: String!, $lat_min: numeric!, $lon_min: numeric!, $lat_max: numeric!, $lon_max: numeric!, $subscription_type: subscription_enum!, $language: String!) {
               insert_subscriptions_one(
-                object: {interval: $interval, email: $email, lat_min: $lat_min, lon_min: $lon_min, lat_max: $lat_max, lon_max: $lon_max, subscription_type: $subscription_type, language: $language}
+                object: {title: $title, interval: $interval, email: $email, lat_min: $lat_min, lon_min: $lon_min, lat_max: $lat_max, lon_max: $lon_max, subscription_type: $subscription_type, language: $language}
               ) {
                 id
+                title
                 email
                 interval
                 lat_min
@@ -294,6 +298,7 @@ class Client(AsyncBaseClient):
             """
         )
         variables: Dict[str, object] = {
+            "title": title,
             "interval": interval,
             "email": email,
             "lat_min": lat_min,
@@ -320,6 +325,7 @@ class Client(AsyncBaseClient):
             mutation DeleteSubscriptionsByPk($id: uuid!) {
               delete_subscriptions_by_pk(id: $id) {
                 id
+                title
                 email
                 interval
                 lat_min
@@ -353,6 +359,7 @@ class Client(AsyncBaseClient):
             mutation DeactivateSubscription($id: uuid!) {
               update_subscriptions_by_pk(pk_columns: {id: $id}, _set: {is_active: false}) {
                 id
+                title
                 email
                 interval
                 lat_min

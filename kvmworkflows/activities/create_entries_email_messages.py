@@ -39,7 +39,7 @@ if __name__ == "__main__":
         lat_max=45.61,
         lon_max=8.07,
         interval="daily",
-        subscription_type=EntrySubscriptionType.CREATION,
+        subscription_type=EntrySubscriptionType.CREATES,
     )
 
     entries: List[EntryDict] = [

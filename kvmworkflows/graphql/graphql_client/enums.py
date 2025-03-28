@@ -132,6 +132,7 @@ class subscriptions_select_column(str, Enum):
     lon_min = "lon_min"
     n_emails_sent = "n_emails_sent"
     subscription_type = "subscription_type"
+    title = "title"
     updated_at = "updated_at"
 
 
@@ -149,6 +150,7 @@ class subscriptions_update_column(str, Enum):
     lon_min = "lon_min"
     n_emails_sent = "n_emails_sent"
     subscription_type = "subscription_type"
+    title = "title"
     updated_at = "updated_at"
 
 

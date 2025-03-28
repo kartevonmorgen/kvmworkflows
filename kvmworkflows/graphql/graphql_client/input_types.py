@@ -647,6 +647,7 @@ class subscriptions_bool_exp(BaseModel):
     lon_min: Optional["numeric_comparison_exp"] = None
     n_emails_sent: Optional["Int_comparison_exp"] = None
     subscription_type: Optional["subscription_enum_comparison_exp"] = None
+    title: Optional["String_comparison_exp"] = None
     updated_at: Optional["timestamptz_comparison_exp"] = None
 
 
@@ -672,6 +673,7 @@ class subscriptions_insert_input(BaseModel):
     lon_min: Optional[Any] = None
     n_emails_sent: Optional[int] = None
     subscription_type: Optional[Any] = None
+    title: Optional[str] = None
     updated_at: Optional[Any] = None
 
 
@@ -695,6 +697,7 @@ class subscriptions_order_by(BaseModel):
     lon_min: Optional[order_by] = None
     n_emails_sent: Optional[order_by] = None
     subscription_type: Optional[order_by] = None
+    title: Optional[order_by] = None
     updated_at: Optional[order_by] = None
 
 
@@ -716,6 +719,7 @@ class subscriptions_set_input(BaseModel):
     lon_min: Optional[Any] = None
     n_emails_sent: Optional[int] = None
     subscription_type: Optional[Any] = None
+    title: Optional[str] = None
     updated_at: Optional[Any] = None
 
 
@@ -738,6 +742,7 @@ class subscriptions_stream_cursor_value_input(BaseModel):
     lon_min: Optional[Any] = None
     n_emails_sent: Optional[int] = None
     subscription_type: Optional[Any] = None
+    title: Optional[str] = None
     updated_at: Optional[Any] = None
 
 

@@ -12,6 +12,7 @@ class InsertSubscriptionsOne(BaseModel):
 
 class InsertSubscriptionsOneInsertSubscriptionsOne(BaseModel):
     id: Any
+    title: str
     email: str
     interval: str
     lat_min: Any

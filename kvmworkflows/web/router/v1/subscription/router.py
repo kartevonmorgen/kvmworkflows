@@ -12,6 +12,7 @@ router = APIRouter()
 
 
 class CreateSubscriptionRequest(BaseModel):
+    title: str
     email: EmailStr
     lat_min: float
     lon_min: float
@@ -24,6 +25,7 @@ class CreateSubscriptionRequest(BaseModel):
 
 class SubscriptionResponse(BaseModel):
     id: UUID
+    title: str
     email: EmailStr
     lat_min: float
     lon_min: float
@@ -63,6 +65,7 @@ async def create_subscription(
         )
 
     insert_subscription_response = await graphql_client.insert_subscriptions_one(
+        title=subscription.title,
         email=subscription.email,
         lat_min=subscription.lat_min,
         lon_min=subscription.lon_min,
@@ -83,6 +86,7 @@ async def create_subscription(
 
     response = SubscriptionResponse(
         id=subscription_id,
+        title=subscription.title,
         email=subscription.email,
         lat_min=subscription.lat_min,
         lon_min=subscription.lon_min,
@@ -113,6 +117,7 @@ async def unsubscribe(subscription_id: str) -> SubscriptionResponse:
 
     response = SubscriptionResponse(
         id=deactivated_subscription.id,
+        title=deactivated_subscription.title,
         email=deactivated_subscription.email,
         lat_min=deactivated_subscription.lat_min,
         lon_min=deactivated_subscription.lon_min,
