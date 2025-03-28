@@ -11,7 +11,7 @@ from kvmworkflows.config.config import config
 
 
 class EmailMessage(BaseModel):
-    sender: str = Field(..., examples=["Test <noreply@dev.kartevonmorgen.org>"])
+    sender: str
     to: Union[str, List[str]]
     subject: str
     text: Optional[str] = None

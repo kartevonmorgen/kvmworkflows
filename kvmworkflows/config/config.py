@@ -38,8 +38,19 @@ class TemporalWorkflowConfig(BaseModel):
     cron_schedule: str
 
 
+class TemporalAreaSubscriptionsEntryCreationConfig(BaseModel):
+    daily: TemporalWorkflowConfig
+    weekly: TemporalWorkflowConfig
+    monthly: TemporalWorkflowConfig
+
+
+class TemporalAreaSubscriptionsConfig(BaseModel):
+    entry_creation: TemporalAreaSubscriptionsEntryCreationConfig
+
+
 class TemporalWorkflowsConfig(BaseModel):
     sync_bbox: TemporalWorkflowConfig
+    area_subscription: TemporalAreaSubscriptionsConfig
 
 
 class TemporalConfig(BaseModel):

@@ -3,12 +3,14 @@ import asyncio
 from temporalio.client import Client
 from loguru import logger
 
+from kvmworkflows.models.subscription_interval import SubscriptionInterval
+from kvmworkflows.models.subscription_types import EntrySubscriptionType
 from kvmworkflows.workflows.sync_bbox import Workflow
 from kvmworkflows.config.config import config
 
 
 async def main():
-    logger.info("Starting workflow")
+    logger.info("Starting sync bbox workflow")
     client = await Client.connect(config.temporal.uri)
 
     stories = await client.execute_workflow(

@@ -3,11 +3,12 @@ import asyncio
 from datetime import timedelta
 from temporalio import workflow
 
-from loguru import logger
-
 
 with workflow.unsafe.imports_passed_through():
     import numpy as np
+    
+    from loguru import logger
+    
     from kvmworkflows.config.config import config
     from kvmworkflows.activities.get_tags import get_tags
     from kvmworkflows.activities.insert_tags import insert_tags

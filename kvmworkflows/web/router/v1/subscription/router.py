@@ -4,7 +4,7 @@ from uuid import UUID
 
 from kvmworkflows.graphql.client import graphql_client
 from kvmworkflows.models.subscription_interval import SubscriptionInterval
-from kvmworkflows.models.subscription_types import SubscriptionType
+from kvmworkflows.models.subscription_types import EntrySubscriptionType
 from kvmworkflows.models.supported_languages import SupportedLanguages
 
 
@@ -18,7 +18,7 @@ class CreateSubscriptionRequest(BaseModel):
     lat_max: float
     lon_max: float
     interval: SubscriptionInterval
-    subscription_type: SubscriptionType
+    subscription_type: EntrySubscriptionType
     language: SupportedLanguages
 
 
@@ -30,7 +30,7 @@ class SubscriptionResponse(BaseModel):
     lat_max: float
     lon_max: float
     interval: SubscriptionInterval
-    subscription_type: SubscriptionType
+    subscription_type: EntrySubscriptionType
     language: SupportedLanguages
     is_active: bool
 
@@ -119,7 +119,7 @@ async def unsubscribe(subscription_id: str) -> SubscriptionResponse:
         lat_max=deactivated_subscription.lat_max,
         lon_max=deactivated_subscription.lon_max,
         interval=SubscriptionInterval(deactivated_subscription.interval),
-        subscription_type=SubscriptionType(deactivated_subscription.subscription_type),
+        subscription_type=EntrySubscriptionType(deactivated_subscription.subscription_type),
         language=SupportedLanguages(deactivated_subscription.language),
         is_active=deactivated_subscription.is_active,
     )

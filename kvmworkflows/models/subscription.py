@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import List, TypeAlias
 
-from kvmworkflows.models.subscription_types import SubscriptionType
+from kvmworkflows.models.subscription_types import EntrySubscriptionType
 
 
 class Subscription(BaseModel):
@@ -12,7 +12,7 @@ class Subscription(BaseModel):
     lat_max: float
     lon_max: float
     interval: str
-    subscription_type: SubscriptionType
+    subscription_type: EntrySubscriptionType
 
 
 Subscriptions: TypeAlias = List[Subscription]

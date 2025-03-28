@@ -1,4 +1,4 @@
-from liquid import render
+from liquid import Template
 from pydantic import BaseModel
 
 
@@ -8,7 +8,9 @@ def render_template(template_path: str, /, **kwargs) -> str:
 
     for k, v in kwargs.items():
         if isinstance(v, BaseModel):
-            kwargs[k] = v.model_dump()
+            kwargs[k] = v.model_dump()    
 
-    return render(template, **kwargs)
-
+    template_obj = Template(template)
+    rendered = template_obj.render(**kwargs)
+    
+    return rendered

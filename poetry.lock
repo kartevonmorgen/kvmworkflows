@@ -272,6 +272,20 @@ uvicorn = {version = ">=0.15.0", extras = ["standard"]}
 standard = ["uvicorn[standard] (>=0.15.0)"]
 
 [[package]]
+name = "fire"
+version = "0.7.0"
+description = "A library for automatically generating command line interfaces."
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "fire-0.7.0.tar.gz", hash = "sha256:961550f07936eaf65ad1dc8360f2b2bf8408fad46abbfa4d2a3794f8d2a95cdf"},
+]
+
+[package.dependencies]
+termcolor = "*"
+
+[[package]]
 name = "graphql-core"
 version = "3.2.6"
 description = "GraphQL implementation for Python, a port of GraphQL.js, the JavaScript reference implementation for GraphQL."
@@ -748,14 +762,14 @@ files = [
 
 [[package]]
 name = "pydantic"
-version = "2.10.4"
+version = "2.10.6"
 description = "Data validation using Python type hints"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "pydantic-2.10.4-py3-none-any.whl", hash = "sha256:597e135ea68be3a37552fb524bc7d0d66dcf93d395acd93a00682f1efcb8ee3d"},
-    {file = "pydantic-2.10.4.tar.gz", hash = "sha256:82f12e9723da6de4fe2ba888b5971157b3be7ad914267dea8f05f82b28254f06"},
+    {file = "pydantic-2.10.6-py3-none-any.whl", hash = "sha256:427d664bf0b8a2b34ff5dd0f5a18df00591adcee7198fbd71981054cef37b584"},
+    {file = "pydantic-2.10.6.tar.gz", hash = "sha256:ca5daa827cce33de7a42be142548b0096bf05a7e7b365aebfa5f8eeec7128236"},
 ]
 
 [package.dependencies]
@@ -766,6 +780,24 @@ typing-extensions = ">=4.12.2"
 [package.extras]
 email = ["email-validator (>=2.0.0)"]
 timezone = ["tzdata ; python_version >= \"3.9\" and platform_system == \"Windows\""]
+
+[[package]]
+name = "pydantic-converter"
+version = "0.1.4"
+description = "Convert pydantic model to other format"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "pydantic_converter-0.1.4-py3-none-any.whl", hash = "sha256:eefbc2cb92e47b26064888faac6052b6ebc1884a98ee22ae5e1794a370948957"},
+    {file = "pydantic_converter-0.1.4.tar.gz", hash = "sha256:fffb40478b81efd297b96f55372d432f931a8d7af21b44fcc6ca260a017f2a04"},
+]
+
+[package.dependencies]
+fire = ">=0.6.0"
+pydantic = ">2.0"
+pyhumps = ">=3.8.0"
+rich = ">=13.7.1"
 
 [[package]]
 name = "pydantic-core"
@@ -906,6 +938,18 @@ files = [
 
 [package.extras]
 windows-terminal = ["colorama (>=0.4.6)"]
+
+[[package]]
+name = "pyhumps"
+version = "3.8.0"
+description = "🐫  Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python. Inspired by Humps for Node"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "pyhumps-3.8.0-py3-none-any.whl", hash = "sha256:060e1954d9069f428232a1adda165db0b9d8dfdce1d265d36df7fbff540acfd6"},
+    {file = "pyhumps-3.8.0.tar.gz", hash = "sha256:498026258f7ee1a8e447c2e28526c0bea9407f9a59c03260aee4bd6c04d681a3"},
+]
 
 [[package]]
 name = "python-dateutil"
@@ -1134,18 +1178,18 @@ full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart (>=0.0.7
 
 [[package]]
 name = "temporalio"
-version = "1.8.0"
+version = "1.10.0"
 description = "Temporal.io Python SDK"
 optional = false
-python-versions = "<4.0,>=3.8"
+python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "temporalio-1.8.0-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:c6acb217d4bd7297389db756dd9da73ef2bae17f6afee1faa8bf77be200e8b93"},
-    {file = "temporalio-1.8.0-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:6ec61660631b2513ce710b468068135280996af105571126295c9645bf29ee22"},
-    {file = "temporalio-1.8.0-cp38-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:4ee13d155dc917e7792b87d1e37b1a0e837c361deb722ccc294edaa5344f2fa2"},
-    {file = "temporalio-1.8.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:6b67c115b6eaceddae373dc2c597e5ad5dd567282f4bb0ee63c99124f5f0c12d"},
-    {file = "temporalio-1.8.0-cp38-abi3-win_amd64.whl", hash = "sha256:6a45571c09859b6cbf33be26dd5d5fab7e7ee3625750a7b91ebde5770e61015b"},
-    {file = "temporalio-1.8.0.tar.gz", hash = "sha256:b9e239b8bfd60126a4b591c6e2e691392b69afc8cac9db452d692654bf85f9cc"},
+    {file = "temporalio-1.10.0-cp39-abi3-macosx_10_9_x86_64.whl", hash = "sha256:81fd40eeeba0396a7193ab5b45877301234b983aa38e444dfceecad2b3224398"},
+    {file = "temporalio-1.10.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:2f7bff9ac1fc832655342e9677bbee1b413b97857d1f2265f018ce72fb7758f8"},
+    {file = "temporalio-1.10.0-cp39-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:c3ee8416d1cab04036e03e39a4db4cf4a9a799750b8da20022e0d719da9c9371"},
+    {file = "temporalio-1.10.0-cp39-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:4f5805e0d33ba525ccea01e3cd9d3eca313e0c66c6b86e6cb0f15ef004c0acc0"},
+    {file = "temporalio-1.10.0-cp39-abi3-win_amd64.whl", hash = "sha256:81cb8bef8aef6d3cc130c7cecf008cf529177a2f9cb206cfba2897db7df9d093"},
+    {file = "temporalio-1.10.0.tar.gz", hash = "sha256:688400e4ca7f6b47c0ade3ebb6549e4d79b0762430ea735a0d8ff83b1ab8b8ba"},
 ]
 
 [package.dependencies]
@@ -1154,8 +1198,24 @@ types-protobuf = ">=3.20"
 typing-extensions = ">=4.2.0,<5.0.0"
 
 [package.extras]
-grpc = ["grpcio (>=1.59.0,<2.0.0)"]
+grpc = ["grpcio (>=1.48.2,<2.0.0)"]
 opentelemetry = ["opentelemetry-api (>=1.11.1,<2.0.0)", "opentelemetry-sdk (>=1.11.1,<2.0.0)"]
+pydantic = ["pydantic (>=2.0.0,<3.0.0)"]
+
+[[package]]
+name = "termcolor"
+version = "2.5.0"
+description = "ANSI color formatting for output in terminal"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "termcolor-2.5.0-py3-none-any.whl", hash = "sha256:37b17b5fc1e604945c2642c872a3764b5d547a48009871aea3edd3afa180afb8"},
+    {file = "termcolor-2.5.0.tar.gz", hash = "sha256:998d8d27da6d48442e8e1f016119076b690d962507531df4890fcd2db2ef8a6f"},
+]
+
+[package.extras]
+tests = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "toml"
@@ -1494,4 +1554,4 @@ dev = ["black (>=19.3b0) ; python_version >= \"3.6\"", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "2ac0fb4aac4d893f73ce87b1034b8497827c1f12f33cf9205b15a4bd711ff486"
+content-hash = "4fe92a12889c074a414c8b1f9ba61bc780fff3571da57b39a4e36908472bbf98"

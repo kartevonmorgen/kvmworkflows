@@ -1,24 +1,29 @@
 from datetime import date
-from temporalio import activity
 from rich import print
-from kvmworkflows.graphql.client import graphql_client
-from kvmworkflows.models.entries import Entries, Entry
-from kvmworkflows.models.review_status import ReviewStatus
+from temporalio import activity
+from typing import List
+
 from kvmworkflows.config.config import config
+from kvmworkflows.graphql.client import graphql_client
+from kvmworkflows.models.entries import EntryDict
+from kvmworkflows.models.subscription_interval import SubscriptionInterval
 
 
 @activity.defn
 async def fetch_created_entries_by_filters(
-    start: date,
-    end: date,
+    interval: SubscriptionInterval,
     lat_min: float,
     lon_min: float,
     lat_max: float,
     lon_max: float,
-) -> Entries:
+) -> List[EntryDict]:
+    # start, end = interval.passed_interval_dates.start_date, interval.passed_interval_dates.end_date
+
+    start, end = date(2025, 3, 23), date(2025, 3, 27)
+
     # the entries before the skip date are skipped
-    if start < config.start_date:
-        start = config.start_date
+    # if start < config.start_date:
+    #     start = config.start_date
 
     entries_result = await graphql_client.get_entries_by_filters(
         create_at_gte=start,
@@ -31,13 +36,13 @@ async def fetch_created_entries_by_filters(
     db_entries = entries_result.entries
     entries = list(
         map(
-            lambda db_entry: Entry(
+            lambda db_entry: EntryDict(
                 id=db_entry.id,
                 created_at=db_entry.created_at,
                 updated_at=db_entry.updated_at,
                 title=db_entry.title,
                 description=db_entry.description,
-                status=ReviewStatus(db_entry.status),
+                status=db_entry.status,
                 lat=db_entry.lat,
                 lng=db_entry.lng,
             ),
@@ -50,14 +55,13 @@ async def fetch_created_entries_by_filters(
 
 async def test_fetch_entries_by_create_interval():
     entries = await fetch_created_entries_by_filters(
-        date(2024, 12, 21),
-        date(2024, 12, 23),
-        lat_min=50.74,
-        lat_max=50.75,
-        lon_min=7.1,
-        lon_max=7.2,
+        interval=SubscriptionInterval.DAILY,
+        lat_max=45.61,
+        lat_min=45.5,
+        lon_max=8.07,
+        lon_min=8,
     )
-    print(entries[:2])
+    print(entries)
     print(len(entries))
 
 

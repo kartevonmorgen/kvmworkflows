@@ -2,29 +2,27 @@ from datetime import timedelta
 from temporalio import workflow
 from typing import List
 
-from kvmworkflows.config.config import config
-from kvmworkflows.models.subscription_types import SubscriptionType
-from kvmworkflows.mail.mailngun import EmailMessage
+from kvmworkflows.models.subscription_types import EntrySubscriptionType
 
 
 with workflow.unsafe.imports_passed_through():
-    from kvmworkflows.models.subscription_interval import SubscriptionInterval
+    from kvmworkflows.activities.create_entries_email_messages import create_entries_email_messages
     from kvmworkflows.activities.fetch_entries import fetch_created_entries_by_filters
-    from kvmworkflows.activities.send_emails import (
-        send_emails,
-    )
-    from kvmworkflows.activities.fetch_subscriptions import (
-        fetch_subscriptions_by_interval,
-    )
+    from kvmworkflows.activities.fetch_subscriptions import fetch_subscriptions_by_interval
+    from kvmworkflows.activities.send_emails import send_emails
+    from kvmworkflows.config.config import config
+    from kvmworkflows.mail.mailngun import EmailMessage
+    from kvmworkflows.models.subscription_interval import SubscriptionInterval
 
 
 @workflow.defn
 class Workflow:
+    
     @workflow.run
     async def run(
         self,
         interval: SubscriptionInterval,
-        subscription_type: SubscriptionType
+        subscription_type: EntrySubscriptionType,
     ):
         subscriptions = await workflow.execute_activity(
             fetch_subscriptions_by_interval,
@@ -33,13 +31,11 @@ class Workflow:
         )
 
         email_messages: List[EmailMessage] = []
-        start, end = interval.passed_interval_dates
         for subscription in subscriptions:
             entries = await workflow.execute_activity(
                 fetch_created_entries_by_filters,
                 args=(
-                    start,
-                    end,
+                    interval,
                     subscription.lat_min,
                     subscription.lon_min,
                     subscription.lat_max,
@@ -48,15 +44,13 @@ class Workflow:
                 start_to_close_timeout=timedelta(seconds=300),
             )
 
-            for entry in entries:
-                email_message: EmailMessage = EmailMessage(
-                    sender=config.email.area_subscription_creates.sender,
-                    to=subscription.email,
-                    subject=config.email.area_subscription_creates.subject,
-                    html=entry.to_creates_html(),
-                    unsubscribe_link=entry.unsubscribe_link,
-                )
-                email_messages.append(email_message)
+            subscription_email_messages = await workflow.execute_activity(
+                create_entries_email_messages,
+                args=(subscription, entries),
+                start_to_close_timeout=timedelta(seconds=300),
+            )
+            
+            email_messages.extend(subscription_email_messages)
 
         await workflow.execute_activity(
             send_emails,

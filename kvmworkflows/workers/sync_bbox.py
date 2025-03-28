@@ -14,9 +14,9 @@ from kvmworkflows.config.config import config
 
 
 async def main():
-    logger.info("Starting worker")
+    logger.info("Starting worker: sync bbox")
     client = await Client.connect(config.temporal.uri)
-    logger.success("Connected to Temporal")
+    logger.success("Connected to Temporal: sync bbox")
 
     worker = Worker(
         client,
