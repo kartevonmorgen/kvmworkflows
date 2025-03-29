@@ -1,0 +1,73 @@
+# for entries with create time before this date, we will be skipped
+start_date: "2025-03-29"
+
+app:
+  title: "kartevonmorgen workflows"
+  host: "0.0.0.0"
+  port: 7231
+  cors:
+    allowed_origins: ["*"]
+    allowed_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    allowed_headers: ["*"]
+    allow_credentials: true
+
+email:
+  domain: "dev.kartevonmorgen.org"
+  api_key: "79f7edbab97940290dcc75c4c1bf4a3e-ac3d5f74-914c311c"
+  url: "https://api.eu.mailgun.net/v3/dev.kartevonmorgen.org/messages"
+  rate_limit: 5 # requests to mailgun per second
+  max_retries: 4
+  retry_delay: 2
+  concurrency: 10
+  test_email_recipient: "navidkalaei@gmail.com" # email to send test emails to. is optional
+  area_subscription_creates:
+      sender: "Test <noreply@dev.kartevonmorgen.org>"
+      subject: "Test E-Mail von Mailgun"
+      template: "templates/{language}/area_subscription/creates.liquid"
+      unsubscribe_url: "https://dev.kartevonmorgen.org/v1/unsubscribe" # change this to the unsubscribe url of your app
+      start_to_close_timeout_seconds: 300
+
+temporal:
+  uri: "95.217.222.28:7233"
+  workflows:
+    sync_bbox:
+      name: sync_bbox
+      task_queue: sync_bbox
+      cron_schedule: "" # to run immediately set it to empty string
+
+    area_subscription:
+      limit: 100 # the maximum number of entries to fetch from database. if too large then this message is thrown. grpc: received message larger than max
+      entry_creation:
+        daily:
+          name: send_daily_area_subscriptions_on_entry_creation
+          task_queue: send_daily_area_subscriptions_on_entry_creation
+          cron_schedule: "" # every day at midnight
+        
+        weekly:
+          name: send_weekly_area_subscriptions_on_entry_creation
+          task_queue: send_weekly_area_subscriptions_on_entry_creation
+          cron_schedule: "0 0 * * 0" # every Sunday at midnight
+        
+        monthly:
+          name: send_monthly_area_subscriptions_on_entry_creation
+          task_queue: send_monthly_area_subscriptions_on_entry_creation
+          cron_schedule: "0 0 1 * *" # every first day of the month at midnight
+
+sources:
+  ofdb:
+    url: https://dev.ofdb.io/v0
+    limit: 2000 # the maximum number of records to fetch from ofdb is hardcoded to be 2000 at max
+
+sinks:
+  graphql:
+    url: http://95.217.222.28:8787/v1/graphql
+    timeout: 300 # in seconds
+    headers:
+      x-hasura-admin-secret: HFyp3TNzjiwmNFt7TfxTcXsNbGbg5Jrd
+
+areas:
+  - name: europe
+    lats: [43.9137, 55.3666]
+    lngs: [-5.8227, 20.1489]
+    lat_n_chunks: 25
+    lng_n_chunks: 25
