@@ -17,14 +17,13 @@ async def fetch_created_entries_by_filters(
     lat_max: float,
     lon_max: float,
 ) -> List[EntryDict]:
-    # TODO: uncomment this line
-    # start, end = interval.passed_interval_dates.start_date, interval.passed_interval_dates.end_date
+    start, end = interval.passed_interval_dates.start_date, interval.passed_interval_dates.end_date
 
     start, end = date(2025, 3, 23), date(2025, 3, 27)
 
     # the entries before the skip date are skipped
-    # if start < config.start_date:
-    #     start = config.start_date
+    if start < config.start_date:
+        start = config.start_date
 
     entries_result = await graphql_client.get_entries_by_filters(
         create_at_gte=start,

@@ -3,7 +3,7 @@ import hydra
 from datetime import date
 from omegaconf import OmegaConf
 from pydantic import BaseModel
-from typing import cast, Any, List, Tuple, Mapping, Optional
+from typing import List, Tuple, Mapping, Optional
 from rich import print
 
 
@@ -104,9 +104,9 @@ class Config(BaseModel):
 
 
 hydra.initialize(version_base=None, config_path="../..")
-config_container = cast(dict[str, Any], OmegaConf.to_container(hydra.compose("config")))
-config = Config(**config_container)
-
+cfg = hydra.compose("config")
+resolved_cfg = OmegaConf.to_container(cfg, resolve=True)
+config = Config.model_validate(resolved_cfg)
 
 if __name__ == "__main__":
     print(config)

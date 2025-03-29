@@ -144,6 +144,8 @@ services:
         condition: service_healthy
     networks:
       - app_network
+    volumes:
+      - ./config.yaml:/app/config.yaml
 
   x-temporal-service-base: &temporal-service-base
     <<: *app-service-base
@@ -155,6 +157,8 @@ services:
     networks:
       - app_network
       - temporal-network
+    volumes:
+      - ./config.yaml:/app/config.yaml
     
   # Application services
   web:
