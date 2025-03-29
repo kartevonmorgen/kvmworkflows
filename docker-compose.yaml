@@ -16,9 +16,10 @@ services:
       - app_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -p ${POSTGRES_PORT} -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 1s
+      interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 5
+      start_period: 10s
     command: -p ${POSTGRES_PORT}
 
   hasura:
@@ -36,9 +37,10 @@ services:
       - "${HASURA_PORT}:8080"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1"]
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 3s
       retries: 3
+      start_period: 30s
     networks:
       - app_network
   
@@ -71,16 +73,15 @@ services:
       - temporal-network
     ports:
       - "${TEMPORAL_POSTGRES_PORT}:${TEMPORAL_POSTGRES_PORT}"
-    expose:
-      - ${TEMPORAL_POSTGRES_PORT}
     volumes:
       - temporal-pgdata:/var/lib/postgresql/data
     command: -p ${TEMPORAL_POSTGRES_PORT}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -p ${TEMPORAL_POSTGRES_PORT} -U ${TEMPORAL_POSTGRES_USER} -d temporal"]
-      interval: 1s
+      interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 5
+      start_period: 10s
 
   temporal:
     container_name: temporal
@@ -103,7 +104,7 @@ services:
     networks:
       - temporal-network
     ports:
-      - 7233:7233
+      - "${TEMPORAL_PORT}:7233"
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
 
