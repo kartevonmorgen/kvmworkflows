@@ -34,6 +34,11 @@ services:
       HASURA_GRAPHQL_ENABLE_CONSOLE: ${HASURA_GRAPHQL_ENABLE_CONSOLE}
     ports:
       - "${HASURA_PORT}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - app_network
   
@@ -128,6 +133,20 @@ services:
       - temporal-network
     ports:
       - "${TEMPORAL_UI_PORT}:8080"
+    
+  # Application services
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app_container
+    restart: always
+    depends_on:
+      hasura:
+        condition: service_healthy  
+    ports:
+      - "${APP_PORT}:7233"
+    command: poetry run python /app/kvmworkflows/web/server.py
 
 networks:
   app_network:
