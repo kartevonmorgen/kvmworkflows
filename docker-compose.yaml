@@ -167,6 +167,16 @@ services:
       - "${WEB_PORT}:7233"
     command: poetry run python /app/kvmworkflows/web/server.py
   
+  temporal_sync_bbox_worker:
+    <<: *temporal-service-base
+    container_name: temporal_sync_bbox_worker
+    command: poetry run python /app/kvmworkflows/workers/sync_bbox.py
+  
+  temporal_sync_bbox_runner:
+    <<: *temporal-service-base
+    container_name: temporal_sync_bbox_runner
+    command: poetry run python /app/kvmworkflows/runners/sync_bbox.py
+
   temporal_send_subscription_emails_worker:
     <<: *temporal-service-base
     container_name: temporal_send_subscription_emails_worker
