@@ -17,6 +17,7 @@ async def fetch_created_entries_by_filters(
     lat_max: float,
     lon_max: float,
 ) -> List[EntryDict]:
+    # TODO: uncomment this line
     # start, end = interval.passed_interval_dates.start_date, interval.passed_interval_dates.end_date
 
     start, end = date(2025, 3, 23), date(2025, 3, 27)
