@@ -133,20 +133,59 @@ services:
       - temporal-network
     ports:
       - "${TEMPORAL_UI_PORT}:8080"
+
+
+  # Base templates for application services
+  x-app-service-base: &app-service-base
+    image: ${COMPOSE_PROJECT_NAME}_web
+    restart: always
+    depends_on:
+      hasura:
+        condition: service_healthy
+    networks:
+      - app_network
+
+  x-temporal-service-base: &temporal-service-base
+    <<: *app-service-base
+    depends_on:
+      hasura:
+        condition: service_healthy
+      temporal:
+        condition: service_healthy
+    networks:
+      - app_network
+      - temporal-network
     
   # Application services
   web:
+    <<: *app-service-base
     build:
       context: .
       dockerfile: Dockerfile
     container_name: app_container
-    restart: always
-    depends_on:
-      hasura:
-        condition: service_healthy  
     ports:
-      - "${APP_PORT}:7233"
+      - "${WEB_PORT}:7233"
     command: poetry run python /app/kvmworkflows/web/server.py
+  
+  temporal_send_subscription_emails_worker:
+    <<: *temporal-service-base
+    container_name: temporal_send_subscription_emails_worker
+    command: poetry run python /app/kvmworkflows/workers/send_subscription_emails.py
+  
+  temporal_area_subscription_entry_creation_daily_runner:
+    <<: *temporal-service-base
+    container_name: temporal_area_subscription_entry_creation_daily_runner
+    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/daily.py
+  
+  temporal_area_subscription_entry_creation_weekly_runner:
+    <<: *temporal-service-base
+    container_name: temporal_area_subscription_entry_creation_weekly_runner
+    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/weekly.py
+  
+  temporal_area_subscription_entry_creation_monthly_runner:
+    <<: *temporal-service-base
+    container_name: temporal_area_subscription_entry_creation_monthly_runner
+    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/monthly.py
 
 networks:
   app_network:
