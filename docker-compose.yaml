@@ -49,8 +49,8 @@ services:
     networks:
       - app_network
     volumes:
-      - ./scripts/hasura/export/metadata:/hasura-metadata
-      - ./scripts/hasura/export/migrations:/hasura-migrations
+      - ./hasura/export/metadata:/hasura-metadata
+      - ./hasura/export/migrations:/hasura-migrations
   
   # Temporal services
   temporal-elasticsearch:
