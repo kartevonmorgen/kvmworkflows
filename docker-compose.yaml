@@ -195,6 +195,11 @@ services:
     container_name: temporal_send_subscription_emails_worker
     command: poetry run python /app/kvmworkflows/workers/send_subscription_emails.py
   
+  temporal_area_subscription_entry_creation_hourly_runner:
+    <<: *temporal-service-base
+    container_name: temporal_area_subscription_entry_creation_hourly_runner
+    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/hourly.py
+
   temporal_area_subscription_entry_creation_daily_runner:
     <<: *temporal-service-base
     container_name: temporal_area_subscription_entry_creation_daily_runner
