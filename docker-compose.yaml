@@ -32,7 +32,12 @@ services:
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET}
+      HASURA_GRAPHQL_DEV_MODE: ${HASURA_GRAPHQL_DEV_MODE}
       HASURA_GRAPHQL_ENABLE_CONSOLE: ${HASURA_GRAPHQL_ENABLE_CONSOLE}
+      HASURA_GRAPHQL_AUTO_APPLY_METADATA: ${HASURA_GRAPHQL_AUTO_APPLY_METADATA}
+      HASURA_GRAPHQL_AUTO_APPLY_MIGRATIONS: ${HASURA_GRAPHQL_AUTO_APPLY_MIGRATIONS}
+      HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
+      HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
     ports:
       - "${HASURA_PORT}:8080"
     healthcheck:
@@ -43,6 +48,9 @@ services:
       start_period: 30s
     networks:
       - app_network
+    volumes:
+      - ./scripts/hasura/export/metadata:/hasura-metadata
+      - ./scripts/hasura/export/migrations:/hasura-migrations
   
   # Temporal services
   temporal-elasticsearch:
