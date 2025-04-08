@@ -1,0 +1,25 @@
+table:
+  name: entries
+  schema: public
+array_relationships:
+  - name: entry_categories
+    using:
+      foreign_key_constraint_on:
+        column: entry
+        table:
+          name: entry_categories
+          schema: public
+  - name: links
+    using:
+      foreign_key_constraint_on:
+        column: entry
+        table:
+          name: entry_links
+          schema: public
+  - name: tags
+    using:
+      foreign_key_constraint_on:
+        column: entry
+        table:
+          name: entry_tags
+          schema: public

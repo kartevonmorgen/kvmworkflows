@@ -1,0 +1,7 @@
+- "!include public_entries.yaml"
+- "!include public_entry_categories.yaml"
+- "!include public_entry_links.yaml"
+- "!include public_entry_tags.yaml"
+- "!include public_link.yaml"
+- "!include public_subscriptions.yaml"
+- "!include public_tags.yaml"

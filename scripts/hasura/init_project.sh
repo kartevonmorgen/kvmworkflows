@@ -1,0 +1,1 @@
+hasura init hasura-project --endpoint http://localhost:8080

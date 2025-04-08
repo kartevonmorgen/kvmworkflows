@@ -1,0 +1,11 @@
+table:
+  name: link
+  schema: public
+array_relationships:
+  - name: entry_links
+    using:
+      foreign_key_constraint_on:
+        column: link
+        table:
+          name: entry_links
+          schema: public

@@ -1,0 +1,7 @@
+table:
+  name: entry_categories
+  schema: public
+object_relationships:
+  - name: entryByEntry
+    using:
+      foreign_key_constraint_on: entry
