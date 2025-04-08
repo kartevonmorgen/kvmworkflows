@@ -1,4 +1,4 @@
-from datetime import date
+# from datetime import date
 from rich import print
 from temporalio import activity
 from typing import List
@@ -17,13 +17,13 @@ async def fetch_created_entries_by_filters(
     lat_max: float,
     lon_max: float,
 ) -> List[EntryDict]:
-    start, end = interval.passed_interval_dates.start_date, interval.passed_interval_dates.end_date
+    start, end = interval.passed_interval_datestime.start_datetime, interval.passed_interval_datestime.end_datetime
 
-    start, end = date(2025, 3, 23), date(2025, 3, 27)
+    # start, end = date(2025, 3, 23), date(2025, 3, 27)
 
     # the entries before the skip date are skipped
-    if start < config.start_date:
-        start = config.start_date
+    if start < config.start_datetime:
+        start = config.start_datetime
 
     entries_result = await graphql_client.get_entries_by_filters(
         create_at_gte=start,
@@ -56,7 +56,7 @@ async def fetch_created_entries_by_filters(
 
 async def test_fetch_entries_by_create_interval():
     entries = await fetch_created_entries_by_filters(
-        interval=SubscriptionInterval.DAILY,
+        interval=SubscriptionInterval.HOURLY,
         lat_max=45.61,
         lat_min=45.5,
         lon_max=8.07,

@@ -1,6 +1,6 @@
 import hydra
 
-from datetime import date
+from datetime import datetime
 from omegaconf import OmegaConf
 from pydantic import BaseModel
 from typing import List, Tuple, Mapping, Optional
@@ -39,6 +39,7 @@ class TemporalWorkflowConfig(BaseModel):
 
 
 class TemporalAreaSubscriptionsEntryCreationConfig(BaseModel):
+    hourly: TemporalWorkflowConfig
     daily: TemporalWorkflowConfig
     weekly: TemporalWorkflowConfig
     monthly: TemporalWorkflowConfig
@@ -94,7 +95,7 @@ class EmailConfig(BaseModel):
 
 
 class Config(BaseModel):
-    start_date: date
+    start_datetime: datetime
     app: AppConfig
     temporal: TemporalConfig
     email: EmailConfig

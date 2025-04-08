@@ -65,7 +65,7 @@ class SubscriptionInterval(StrEnum):
 
 def test_subscription_interval():
     print(datetime.now(tz=timezone.utc))
-    interval = SubscriptionInterval.YEARLY
+    interval = SubscriptionInterval.DAILY
     print(interval.passed_interval_datestime)
 
 

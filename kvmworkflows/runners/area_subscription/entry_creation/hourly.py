@@ -10,15 +10,15 @@ from kvmworkflows.config.config import config
 
 
 async def main():
-    logger.info("Starting daily subscriptions workflow")
+    logger.info("Starting hourly subscriptions workflow")
     client = await Client.connect(config.temporal.uri)
 
     stories = await client.execute_workflow(
         Workflow.run,
-        args=(SubscriptionInterval.DAILY, EntrySubscriptionType.CREATES),
-        id=config.temporal.workflows.area_subscription.entry_creation.daily.name,
-        task_queue=config.temporal.workflows.area_subscription.entry_creation.daily.task_queue,
-        cron_schedule=config.temporal.workflows.area_subscription.entry_creation.daily.cron_schedule,
+        args=(SubscriptionInterval.HOURLY, EntrySubscriptionType.CREATES),
+        id=config.temporal.workflows.area_subscription.entry_creation.hourly.name,
+        task_queue=config.temporal.workflows.area_subscription.entry_creation.hourly.task_queue,
+        cron_schedule=config.temporal.workflows.area_subscription.entry_creation.hourly.cron_schedule,
     )
 
 

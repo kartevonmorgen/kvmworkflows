@@ -10,7 +10,7 @@ from kvmworkflows.config.config import config
 
 
 async def main():
-    logger.info("Starting subscriptions workflow")
+    logger.info("Starting monthly subscriptions workflow")
     client = await Client.connect(config.temporal.uri)
 
     stories = await client.execute_workflow(
