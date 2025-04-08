@@ -8,7 +8,10 @@ from kvmworkflows.config.config import config
 from kvmworkflows.web.router.router import router
 
 
-app = FastAPI(title=config.app.title)
+app = FastAPI(
+    title=config.app.title,
+    openapi_url=config.app.openapi_url,
+)
 
 app.add_middleware(
     CORSMiddleware,

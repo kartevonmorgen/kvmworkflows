@@ -72,6 +72,7 @@ class AppConfig(BaseModel):
     host: str
     port: int
     cors: AppCorsConfig
+    openapi_url: str
 
 
 class EmailMetadataConfig(BaseModel):
