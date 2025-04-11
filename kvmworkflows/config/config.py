@@ -105,7 +105,7 @@ class Config(BaseModel):
     areas: List[Area]
 
 
-hydra.initialize(version_base=None, config_path="/app/config.yaml")
+hydra.initialize(version_base=None, config_path="../..")
 cfg = hydra.compose("config")
 resolved_cfg = OmegaConf.to_container(cfg, resolve=True)
 config = Config.model_validate(resolved_cfg)
