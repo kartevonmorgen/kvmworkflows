@@ -16,7 +16,7 @@ async def main():
     stories = await client.execute_workflow(
         Workflow.run,
         args=(SubscriptionInterval.WEEKLY, EntrySubscriptionType.CREATES),
-        id=config.temporal.workflows.area_subscription.entry_creation.weekly.name,
+        id=f"config.temporal.workflows.area_subscription.entry_creation.weekly.name-{datetime.now().isoformat()}",
         task_queue=config.temporal.workflows.area_subscription.entry_creation.weekly.task_queue,
         cron_schedule=config.temporal.workflows.area_subscription.entry_creation.weekly.cron_schedule,
     )

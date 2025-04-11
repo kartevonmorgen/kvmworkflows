@@ -1,5 +1,6 @@
 import asyncio
 
+from datetime import datetime
 from temporalio.client import Client
 from loguru import logger
 
@@ -16,7 +17,7 @@ async def main():
     stories = await client.execute_workflow(
         Workflow.run,
         args=(SubscriptionInterval.HOURLY, EntrySubscriptionType.CREATES),
-        id=config.temporal.workflows.area_subscription.entry_creation.hourly.name,
+        id=f"config.temporal.workflows.area_subscription.entry_creation.hourly.name-{datetime.now().isoformat()}",
         task_queue=config.temporal.workflows.area_subscription.entry_creation.hourly.task_queue,
         cron_schedule=config.temporal.workflows.area_subscription.entry_creation.hourly.cron_schedule,
     )
