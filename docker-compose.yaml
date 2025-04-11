@@ -33,9 +33,7 @@ services:
       HASURA_GRAPHQL_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET}
       HASURA_GRAPHQL_DEV_MODE: ${HASURA_GRAPHQL_DEV_MODE}
-      HASURA_GRAPHQL_ENABLE_CONSOLE: ${HASURA_GRAPHQL_ENABLE_CONSOLE}
-      HASURA_GRAPHQL_AUTO_APPLY_METADATA: ${HASURA_GRAPHQL_AUTO_APPLY_METADATA}
-      HASURA_GRAPHQL_AUTO_APPLY_MIGRATIONS: ${HASURA_GRAPHQL_AUTO_APPLY_MIGRATIONS}
+      HASURA_GRAPHQL_ENABLE_CONSOLE: true
       HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
       HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
     ports:
@@ -49,8 +47,8 @@ services:
     networks:
       - app_network
     volumes:
-      - ./hasura/export/metadata:/hasura-metadata
-      - ./hasura/export/migrations:/hasura-migrations
+      - ./hasura/export:/hasura-export
+      - ./hasura/scripts:/hasura-scripts
   
   # Temporal services
   temporal-elasticsearch:
@@ -145,74 +143,69 @@ services:
 
 
   # Base templates for application services
-  x-app-service-base: &app-service-base
-    image: ${COMPOSE_PROJECT_NAME}_web
+  x-api-service-base: &api-service-base
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
-    depends_on:
-      hasura:
-        condition: service_healthy
     networks:
       - app_network
-    volumes:
-      - ./config.yaml:/app/config.yaml
-
-  x-temporal-service-base: &temporal-service-base
-    <<: *app-service-base
+      - temporal-network  # Add temporal network to web service
     depends_on:
       hasura:
         condition: service_healthy
       temporal:
-        condition: service_healthy
-    networks:
-      - app_network
-      - temporal-network
+        condition: service_started
     volumes:
       - ./config.yaml:/app/config.yaml
+
+  x-temporal-service-base: &temporal-service-base
+    <<: *api-service-base
+    depends_on:
+      api:
+        condition: service_started
     
   # Application services
-  web:
-    <<: *app-service-base
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: app_container
+  api:
+    <<: *api-service-base
+    container_name: api_container
     ports:
-      - "${WEB_PORT}:7233"
+      - "${WEB_PORT}:7921"
     command: poetry run python /app/kvmworkflows/web/server.py
   
-  temporal_sync_bbox_worker:
+  worker_sync_bbox:
     <<: *temporal-service-base
-    container_name: temporal_sync_bbox_worker
+    container_name: sync_bbox_worker
     command: poetry run python /app/kvmworkflows/workers/sync_bbox.py
   
-  temporal_sync_bbox_runner:
+  runner_sync_bbox:
     <<: *temporal-service-base
-    container_name: temporal_sync_bbox_runner
+    container_name: sync_bbox_runner
     command: poetry run python /app/kvmworkflows/runners/sync_bbox.py
-
-  temporal_send_subscription_emails_worker:
+  
+  worker_send_subscription_emails:
     <<: *temporal-service-base
-    container_name: temporal_send_subscription_emails_worker
+    container_name: send_subscription_emails_worker
     command: poetry run python /app/kvmworkflows/workers/send_subscription_emails.py
   
-  temporal_area_subscription_entry_creation_hourly_runner:
+  runner_area_subscription_entry_creation_hourly:
     <<: *temporal-service-base
-    container_name: temporal_area_subscription_entry_creation_hourly_runner
+    container_name: area_subscription_entry_creation_hourly_runner
     command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/hourly.py
 
-  temporal_area_subscription_entry_creation_daily_runner:
+  runner_area_subscription_entry_creation_daily:
     <<: *temporal-service-base
-    container_name: temporal_area_subscription_entry_creation_daily_runner
+    container_name: area_subscription_entry_creation_daily_runner
     command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/daily.py
   
-  temporal_area_subscription_entry_creation_weekly_runner:
+  runner_area_subscription_entry_creation_weekly:
     <<: *temporal-service-base
-    container_name: temporal_area_subscription_entry_creation_weekly_runner
+    container_name: area_subscription_entry_creation_weekly_runner
     command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/weekly.py
   
-  temporal_area_subscription_entry_creation_monthly_runner:
+  runner_area_subscription_entry_creation_monthly:
     <<: *temporal-service-base
-    container_name: temporal_area_subscription_entry_creation_monthly_runner
+    container_name: area_subscription_entry_creation_monthly_runner
     command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/monthly.py
 
 networks:
