@@ -14,7 +14,7 @@ async def main():
 
     stories = await client.execute_workflow(
         Workflow.run,
-        id=f"config.temporal.workflows.sync_bbox.name-{datetime.now().isoformat()}",
+        id=f"{config.temporal.workflows.sync_bbox.name}-{datetime.now().isoformat()}",
         task_queue=config.temporal.workflows.sync_bbox.task_queue,
         cron_schedule=config.temporal.workflows.sync_bbox.cron_schedule,
     )

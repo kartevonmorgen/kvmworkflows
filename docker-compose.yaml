@@ -186,27 +186,27 @@ services:
   worker_send_subscription_emails:
     <<: *temporal-service-base
     container_name: send_subscription_emails_worker
-    command: poetry run python /app/kvmworkflows/workers/send_subscription_emails.py
+    command: poetry run python /app/kvmworkflows/workers/send_subscription_emails.py hourly
   
   runner_area_subscription_entry_creation_hourly:
     <<: *temporal-service-base
     container_name: area_subscription_entry_creation_hourly_runner
-    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/hourly.py
+    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation.py hourly
 
   runner_area_subscription_entry_creation_daily:
     <<: *temporal-service-base
     container_name: area_subscription_entry_creation_daily_runner
-    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/daily.py
+    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation.py daily
   
   runner_area_subscription_entry_creation_weekly:
     <<: *temporal-service-base
     container_name: area_subscription_entry_creation_weekly_runner
-    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/weekly.py
+    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation.py weekly
   
   runner_area_subscription_entry_creation_monthly:
     <<: *temporal-service-base
     container_name: area_subscription_entry_creation_monthly_runner
-    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation/monthly.py
+    command: poetry run python /app/kvmworkflows/runners/area_subscription/entry_creation.py yearly
 
 networks:
   app_network:

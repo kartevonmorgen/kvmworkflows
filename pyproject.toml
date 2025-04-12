@@ -22,6 +22,7 @@ ariadne-codegen = "^0.14.0"
 python-liquid = "^2.0.1"
 pydantic-converter = "^0.1.4"
 python-dotenv = "^1.1.0"
+typer = "^0.15.2"
 
 
 [build-system]
