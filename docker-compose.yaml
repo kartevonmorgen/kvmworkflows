@@ -51,23 +51,6 @@ services:
       - ./hasura/scripts:/hasura-scripts
   
   # Temporal services
-  temporal-elasticsearch:
-    container_name: temporal-elasticsearch
-    environment:
-      - cluster.routing.allocation.disk.threshold_enabled=true
-      - cluster.routing.allocation.disk.watermark.low=512mb
-      - cluster.routing.allocation.disk.watermark.high=256mb
-      - cluster.routing.allocation.disk.watermark.flood_stage=128mb
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms256m -Xmx256m
-      - xpack.security.enabled=false
-    image: elasticsearch:${ELASTICSEARCH_VERSION}
-    networks:
-      - temporal-network
-    expose:
-      - 9200
-    volumes:
-      - temporal-elasticsearch-data:/var/lib/elasticsearch/data
 
   temporal-postgresql:
     container_name: temporal-postgresql
@@ -94,8 +77,6 @@ services:
     depends_on:
       temporal-postgresql:
         condition: service_healthy
-      temporal-elasticsearch:
-        condition: service_started
     environment:
       DB: postgres12 # do not change this
       DB_PORT: ${TEMPORAL_POSTGRES_PORT}
@@ -103,9 +84,7 @@ services:
       POSTGRES_PWD: ${TEMPORAL_POSTGRES_PASSWORD}
       POSTGRES_SEEDS: temporal-postgresql
       DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development-sql.yaml
-      ENABLE_ES: true
-      ES_SEEDS: temporal-elasticsearch
-      ES_VERSION: v7
+      ENABLE_ES: false
     image: temporalio/auto-setup:${TEMPORAL_VERSION}
     networks:
       - temporal-network
@@ -182,7 +161,7 @@ services:
     <<: *temporal-service-base
     container_name: sync_bbox_runner
     command: poetry run python /app/kvmworkflows/runners/sync_bbox.py
-  
+      
   worker_send_subscription_emails:
     <<: *temporal-service-base
     container_name: send_subscription_emails_worker
@@ -218,7 +197,7 @@ networks:
 volumes:
   pgdata:
     driver: local
-  temporal-elasticsearch-data:
-    driver: local
+  # temporal-elasticsearch-data:
+  #   driver: local
   temporal-pgdata:
     driver: local
