@@ -79,7 +79,6 @@ class EmailMetadataConfig(BaseModel):
     sender: str
     subject: str
     template: str
-    unsubscribe_url: Optional[str] = None
     start_to_close_timeout_seconds: int
 
 
@@ -92,11 +91,16 @@ class EmailConfig(BaseModel):
     retry_delay: int
     concurrency: int
     test_email_recipient: Optional[str] = None
+    unsubscribe_url: Optional[str] = None
     area_subscription_creates: EmailMetadataConfig
 
+class KVMConfig(BaseModel):
+    base_url: str
+    entry_url: str
 
 class Config(BaseModel):
     start_datetime: datetime
+    kvm: KVMConfig
     app: AppConfig
     temporal: TemporalConfig
     email: EmailConfig

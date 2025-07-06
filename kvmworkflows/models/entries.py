@@ -5,6 +5,9 @@ from rich import print
 
 from kvmworkflows.config.config import config
 from kvmworkflows.models.review_status import ReviewStatus
+from kvmworkflows.models.subscription import Subscription
+from kvmworkflows.models.subscription_interval import SubscriptionInterval
+from kvmworkflows.models.subscription_types import EntrySubscriptionType
 from kvmworkflows.models.supported_languages import SupportedLanguages
 from kvmworkflows.liquid_utils.render import render_template
 
@@ -18,6 +21,8 @@ class EntryDict(TypedDict):
     status: str
     lat: float
     lng: float
+    tags: List[str]
+    link: str
 
 
 class Entry(BaseModel):
@@ -29,11 +34,12 @@ class Entry(BaseModel):
     status: ReviewStatus
     lat: float
     lng: float
-
+    tags: List[str] = []
+    
     @computed_field
     @property
-    def unsubscribe_link(self) -> str:
-        return f"{config.email.area_subscription_creates.unsubscribe_url}/{self.id}"
+    def link(self) -> str:
+        return f"{config.kvm.entry_url}/{self.id}"
     
     def to_dict(self) -> EntryDict:
         return {
@@ -45,6 +51,8 @@ class Entry(BaseModel):
             "status": self.status.value,
             "lat": self.lat,
             "lng": self.lng,
+            "tags": self.tags,
+            "link": self.link, 
         }
     
     @classmethod
@@ -58,18 +66,15 @@ class Entry(BaseModel):
             status=ReviewStatus(data["status"]),
             lat=data["lat"],
             lng=data["lng"],
+            tags=data["tags"],
         )
 
-
-def get_unsubscribe_link(entry: EntryDict) -> str:
-    return f"{config.email.area_subscription_creates.unsubscribe_url}/{entry['id']}"
-
-
 # todo: maybe move this to a separate module like the template
-def to_creates_html(entry: EntryDict, language: SupportedLanguages = SupportedLanguages.de) -> str:
+def to_creates_html(subscription: Subscription, entries: List[EntryDict], interval: SubscriptionInterval, language: SupportedLanguages = SupportedLanguages.de) -> str:
     rendered = render_template(
-        config.email.area_subscription_creates.template.format(language=language),
-        entry=entry,
+        config.email.area_subscription_creates.template.format(interval=interval, language=language),
+        subscription=subscription.model_dump(),
+        entries=entries,
         domain=config.email.domain,
     )
     
@@ -93,9 +98,22 @@ if __name__ == "__main__":
     
     # print(entry.to_dict())
     
-    entry_dict = entry.to_dict()
-    print(entry_dict)
+    # entry_dict = entry.to_dict()
+    # print(entry_dict)
+    entries_dicts : List[EntryDict] = [entry.to_dict() for _ in range(3)]
+
+    subscription = Subscription(
+       email="navid@gmail.com",
+         id="sub-123",
+        title="Test Subscription",
+        lat_min=10.0,
+        lon_min=10.0,
+        lat_max=20.0,
+        lon_max=20.0,
+        interval=SubscriptionInterval.WEEKLY,
+        subscription_type=EntrySubscriptionType.CREATES,
+    )
 
     # print(json.dumps(entry))
-    rendered = to_creates_html(entry_dict)
+    rendered = to_creates_html(subscription, entries_dicts, SubscriptionInterval.WEEKLY, SupportedLanguages.de)
     print(rendered)
