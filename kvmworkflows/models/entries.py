@@ -18,6 +18,13 @@ class EntryDict(TypedDict):
     status: str
     lat: float
     lng: float
+    # Optional fields for subscription emails - may not be available in all sources
+    category: str | None
+    tags: str | None
+    address_line: str | None
+    homepage: str | None
+    email: str | None
+    phone: str | None
 
 
 class Entry(BaseModel):
@@ -45,6 +52,14 @@ class Entry(BaseModel):
             "status": self.status.value,
             "lat": self.lat,
             "lng": self.lng,
+            # Default values for optional fields - these would need to be populated
+            # from additional database queries or external data sources
+            "category": None,
+            "tags": None,
+            "address_line": None,
+            "homepage": None,
+            "email": None,
+            "phone": None,
         }
     
     @classmethod
@@ -71,6 +86,29 @@ def to_creates_html(entry: EntryDict, language: SupportedLanguages = SupportedLa
         config.email.area_subscription_creates.template.format(language=language),
         entry=entry,
         domain=config.email.domain,
+    )
+    
+    return rendered
+
+
+def to_subscription_digest_html(
+    subscription: "Subscription", 
+    entries: List[EntryDict], 
+    interval: str,
+    language: SupportedLanguages = SupportedLanguages.de
+) -> str:
+    """Render subscription digest email with multiple entries"""
+    from kvmworkflows.models.subscription import Subscription
+    
+    template_path = f"templates/{language}/area_subscription/subscription_digest.liquid"
+    
+    rendered = render_template(
+        template_path,
+        subscription=subscription,
+        entries=entries,
+        interval=interval,
+        domain=config.email.domain,
+        unsubscribe_link=f"{config.email.area_subscription_creates.unsubscribe_url}/{subscription.id}",
     )
     
     return rendered
