@@ -22,7 +22,10 @@ async def create_subscription_digest_email(
         return None
     
     count = len(entries)
-    subject = f"{count} neue Einträge für dein Abo \"{subscription.title}\""
+    if count == 1:
+        subject = f"{count} neuer Eintrag für dein Abo \"{subscription.title}\""
+    else:
+        subject = f"{count} neue Einträge für dein Abo \"{subscription.title}\""
     
     email_message = EmailMessage(
         sender=config.email.area_subscription_creates.sender,
